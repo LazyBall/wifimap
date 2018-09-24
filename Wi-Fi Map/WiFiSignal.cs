@@ -12,7 +12,7 @@ namespace Wi_Fi_Map
 
         public string Ssid { get; set; }
 
-        public byte SignalBars { get; set; }
+        public double NetworkRssiInDecibelMilliwatts { get; set; }
 
         public string NetworkKind { get; set; }
 

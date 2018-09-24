@@ -110,7 +110,7 @@ namespace Wi_Fi_Map
                 {
                     MacAddress = availableNetwork.Bssid,
                     Ssid = availableNetwork.Ssid,
-                    SignalBars = availableNetwork.SignalBars,
+                    NetworkRssiInDecibelMilliwatts = availableNetwork.NetworkRssiInDecibelMilliwatts,
                     ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
                     NetworkKind = availableNetwork.NetworkKind.ToString(),
                     PhysicalKind = availableNetwork.PhyKind.ToString(),
@@ -128,13 +128,13 @@ namespace Wi_Fi_Map
         private StringBuilder CreateCsvReport(WiFiPointData wifiPoint)
         {
             StringBuilder networkInfo = new StringBuilder();
-            networkInfo.AppendLine("MAC,SSID,SignalBars,Type,Lat,Long,Accuracy,Encryption");
+            networkInfo.AppendLine("MAC,SSID,DecibelMilliwatts,Type,Lat,Long,Accuracy,Encryption");
 
             foreach (var wifiSignal in wifiPoint.WiFiSignals)
             {
                 networkInfo.Append($"{wifiSignal.MacAddress},");
                 networkInfo.Append($"{wifiSignal.Ssid},");
-                networkInfo.Append($"{wifiSignal.SignalBars},");
+                networkInfo.Append($"{wifiSignal.NetworkRssiInDecibelMilliwatts},");
                 networkInfo.Append($"{wifiSignal.NetworkKind},");
                 networkInfo.Append($"{wifiPoint.Latitude},");
                 networkInfo.Append($"{wifiPoint.Longitude},");
