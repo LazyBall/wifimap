@@ -44,7 +44,5 @@ namespace Wi_Fi_Map
                 await this.WiFiAdapter.ScanAsync();
             }
         }
-
-
     }
 }
