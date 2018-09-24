@@ -8,9 +8,14 @@ using Windows.Devices.WiFi;
 
 namespace Wi_Fi_Map
 {
-    class WifiScanner
+    public class WiFiScanner
     {
         public WiFiAdapter WiFiAdapter { get; private set; }
+
+        public async Task InitializeScanner()
+        {
+            await InitializeFirstAdapter();
+        }
 
         private async Task InitializeFirstAdapter()
         {
@@ -22,13 +27,11 @@ namespace Wi_Fi_Map
             }
             else
             {
-                var wifiAdapterResults = await DeviceInformation.
-                  FindAllAsync(WiFiAdapter.GetDeviceSelector());
+                var wifiAdapterResults = await DeviceInformation.FindAllAsync(WiFiAdapter.GetDeviceSelector());
 
                 if (wifiAdapterResults.Count >= 1)
                 {
-                    this.WiFiAdapter = await WiFiAdapter.FromIdAsync(
-                      wifiAdapterResults[0].Id);
+                    this.WiFiAdapter = await WiFiAdapter.FromIdAsync(wifiAdapterResults[0].Id);
                 }
                 else
                 {
@@ -41,7 +44,13 @@ namespace Wi_Fi_Map
         {
             if (this.WiFiAdapter != null)
             {
+                var startTime = DateTime.Now;
                 await this.WiFiAdapter.ScanAsync();
+                var endTime = DateTime.Now;
+
+                var duration = endTime - startTime;
+
+                var time = duration.ToString();
             }
         }
     }
