@@ -9,6 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <TextBlock x:Name="texBox" Text="TextBlock" TextWrapping="Wrap"/>
 
     </Grid>
 </Page>
