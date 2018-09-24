@@ -24,7 +24,6 @@ namespace Wi_Fi_Map
     {
         public MainPage()
         {
-            //зашел
             this.InitializeComponent();
         }
     }
