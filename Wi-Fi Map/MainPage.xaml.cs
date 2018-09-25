@@ -42,7 +42,15 @@ namespace Wi_Fi_Map
 
         private async Task InitializeScanner()
         {
-            await this._wifiScanner.InitializeScanner();
+            try
+            {
+                await this._wifiScanner.InitializeScanner();
+            }
+            catch (Exception ex)
+            {
+                MessageDialog md = new MessageDialog(ex.Message);
+                await md.ShowAsync();
+            }
         }
 
         private async void BtnScan_Click(object sender, RoutedEventArgs e)
