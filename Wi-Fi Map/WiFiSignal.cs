@@ -14,11 +14,7 @@ namespace Wi_Fi_Map
 
         public double NetworkRssiInDecibelMilliwatts { get; set; }
 
-        public string NetworkKind { get; set; }
-
-        public string PhysicalKind { get; set; }
-
-        public double ChannelCenterFrequencyInKilohertz { get; set; }
+        public int ChannelCenterFrequencyInKilohertz { get; set; }
 
         public string Encryption { get; set; }
 
