@@ -103,13 +103,11 @@ namespace Wi_Fi_Map
             Geoposition position = await geolocator.GetGeopositionAsync();
 
             WiFiNetworkReport report = this._wifiScanner.WiFiAdapter.NetworkReport;
-            
 
             var wifiPoint = new WiFiPointData()
             {
                 Latitude = position.Coordinate.Point.Position.Latitude,
                 Longitude = position.Coordinate.Point.Position.Longitude,
-                Accuracy = position.Coordinate.Accuracy,
                 TimeStamp = position.Coordinate.Timestamp
             };
 
@@ -144,7 +142,6 @@ namespace Wi_Fi_Map
                 networkInfo.Append($"{wifiSignal.NetworkRssiInDecibelMilliwatts},");
                 networkInfo.Append($"{wifiPoint.Latitude},");
                 networkInfo.Append($"{wifiPoint.Longitude},");
-                networkInfo.Append($"{wifiPoint.Accuracy},");
                 networkInfo.Append($"{wifiSignal.Encryption}");
                 networkInfo.AppendLine();
             }

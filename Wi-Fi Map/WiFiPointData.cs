@@ -17,8 +17,6 @@ namespace Wi_Fi_Map
 
         public double? Longitude { get; set; }
 
-        public double? Accuracy { get; set; }
-
         public List<WiFiSignal> WiFiSignals { get; set; }
 
         public WiFiPointData()
