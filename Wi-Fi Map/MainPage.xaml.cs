@@ -103,6 +103,7 @@ namespace Wi_Fi_Map
             Geoposition position = await geolocator.GetGeopositionAsync();
 
             WiFiNetworkReport report = this._wifiScanner.WiFiAdapter.NetworkReport;
+            
 
             var wifiPoint = new WiFiPointData()
             {
@@ -120,8 +121,6 @@ namespace Wi_Fi_Map
                     Ssid = availableNetwork.Ssid,
                     NetworkRssiInDecibelMilliwatts = availableNetwork.NetworkRssiInDecibelMilliwatts,
                     ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
-                    NetworkKind = availableNetwork.NetworkKind.ToString(),
-                    PhysicalKind = availableNetwork.PhyKind.ToString(),
                     Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString()
                 };
 
@@ -143,7 +142,6 @@ namespace Wi_Fi_Map
                 networkInfo.Append($"{wifiSignal.MacAddress},");
                 networkInfo.Append($"{wifiSignal.Ssid},");
                 networkInfo.Append($"{wifiSignal.NetworkRssiInDecibelMilliwatts},");
-                networkInfo.Append($"{wifiSignal.NetworkKind},");
                 networkInfo.Append($"{wifiPoint.Latitude},");
                 networkInfo.Append($"{wifiPoint.Longitude},");
                 networkInfo.Append($"{wifiPoint.Accuracy},");
