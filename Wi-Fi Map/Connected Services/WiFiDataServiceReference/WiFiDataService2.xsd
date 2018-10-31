@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Wi_Fi_Map_Data_Service" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Wi_Fi_Map_Data_Service" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:53673/WiFiDataService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System" />
+  <xs:complexType name="WiFiPointData">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Latitude" type="xs:double" />
+      <xs:element minOccurs="0" name="Longitude" type="xs:double" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="TimeStamp" type="q1:DateTimeOffset" />
+      <xs:element minOccurs="0" name="WiFiSignals" nillable="true" type="tns:ArrayOfWiFiSignal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WiFiPointData" nillable="true" type="tns:WiFiPointData" />
+  <xs:complexType name="ArrayOfWiFiSignal">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WiFiSignal" nillable="true" type="tns:WiFiSignal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWiFiSignal" nillable="true" type="tns:ArrayOfWiFiSignal" />
+  <xs:complexType name="WiFiSignal">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ChannelCenterFrequencyInKilohertz" type="xs:int" />
+      <xs:element minOccurs="0" name="Encryption" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MacAddress" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NetworkRssiInDecibelMilliwatts" type="xs:double" />
+      <xs:element minOccurs="0" name="Ssid" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="WiFiSignal" nillable="true" type="tns:WiFiSignal" />
+  <xs:complexType name="ArrayOfWiFiSignalWithGeoposition">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="WiFiSignalWithGeoposition" nillable="true" type="tns:WiFiSignalWithGeoposition" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfWiFiSignalWithGeoposition" nillable="true" type="tns:ArrayOfWiFiSignalWithGeoposition" />
+  <xs:complexType name="WiFiSignalWithGeoposition">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:WiFiSignal">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Latitude" type="xs:double" />
+          <xs:element minOccurs="0" name="Longitude" type="xs:double" />
+          <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="TimeStamp" type="q2:DateTimeOffset" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="WiFiSignalWithGeoposition" nillable="true" type="tns:WiFiSignalWithGeoposition" />
+</xs:schema>

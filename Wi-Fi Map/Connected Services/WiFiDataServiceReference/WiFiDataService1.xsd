@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:53673/WiFiDataService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Wi_Fi_Map_Data_Service" />
+  <xs:element name="SaveWiFiNetworks">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Wi_Fi_Map_Data_Service" minOccurs="0" name="wiFiPointData" nillable="true" type="q1:WiFiPointData" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWiFiNetworks">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetWiFiNetworksResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Wi_Fi_Map_Data_Service" minOccurs="0" name="GetWiFiNetworksResult" nillable="true" type="q2:ArrayOfWiFiSignalWithGeoposition" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
