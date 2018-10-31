@@ -102,11 +102,13 @@
     <Compile Include="WiFiPointData.cs" />
     <Compile Include="WiFiScanner.cs" />
     <Compile Include="WiFiSignal.cs" />
+    <Compile Include="WiFiSignalWithGeoposition.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
     <None Include="Wi-Fi Map_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +135,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.7</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
