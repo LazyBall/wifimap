@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Wi_Fi_Map_Data_Service.WiFiDataService" CodeBehind="WiFiDataService.svc.cs" %>

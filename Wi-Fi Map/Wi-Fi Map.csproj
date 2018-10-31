@@ -95,6 +95,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\WiFiDataServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -102,14 +107,39 @@
     <Compile Include="WiFiPointData.cs" />
     <Compile Include="WiFiScanner.cs" />
     <Compile Include="WiFiSignal.cs" />
+    <Compile Include="WiFiSignalWithGeoposition.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="Connected Services\WiFiDataServiceReference\WiFiDataService.wsdl" />
+    <None Include="Connected Services\WiFiDataServiceReference\WiFiDataService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\WiFiDataServiceReference\WiFiDataService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\WiFiDataServiceReference\WiFiDataService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\WiFiDataServiceReference\WiFiDataService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\WiFiDataServiceReference\Wi_Fi_Map.WiFiDataServiceReference.WiFiSignalWithGeoposition.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
     <None Include="Wi-Fi Map_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Connected Services\WiFiDataServiceReference\WiFiDataService.disco" />
+    <None Include="Connected Services\WiFiDataServiceReference\configuration91.svcinfo" />
+    <None Include="Connected Services\WiFiDataServiceReference\configuration.svcinfo" />
+    <None Include="Connected Services\WiFiDataServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -133,6 +163,12 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.7</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\WiFiDataServiceReference\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

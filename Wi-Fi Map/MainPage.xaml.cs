@@ -18,6 +18,7 @@ using Windows.UI.Popups;
 using System.Threading.Tasks;
 using System.Text;
 using Windows.Devices.Geolocation;
+using Wi_Fi_Map.WiFiDataServiceReference;
 
 namespace Wi_Fi_Map
 {
@@ -104,24 +105,15 @@ namespace Wi_Fi_Map
 
             WiFiNetworkReport report = this._wifiScanner.WiFiAdapter.NetworkReport;
 
-            var wifiPoint = new WiFiPointData()
-            {
-                Latitude = position.Coordinate.Point.Position.Latitude,
-                Longitude = position.Coordinate.Point.Position.Longitude,
-                TimeStamp = position.Coordinate.Timestamp
-            };
+            var wifiPoint = new WiFiPointData(position.Coordinate.Timestamp,
+                position.Coordinate.Point.Position.Latitude, position.Coordinate.Point.Position.Longitude);
 
             foreach (var availableNetwork in report.AvailableNetworks)
             {
-                WiFiSignal wifiSignal = new WiFiSignal()
-                {
-                    MacAddress = availableNetwork.Bssid,
-                    Ssid = availableNetwork.Ssid,
-                    NetworkRssiInDecibelMilliwatts = availableNetwork.NetworkRssiInDecibelMilliwatts,
-                    ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
-                    Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString()
-                };
-
+                WiFiSignal wifiSignal = new WiFiSignal(availableNetwork.Bssid, availableNetwork.Ssid,
+                    availableNetwork.NetworkRssiInDecibelMilliwatts,
+                    availableNetwork.ChannelCenterFrequencyInKilohertz,
+                    availableNetwork.SecuritySettings.NetworkEncryptionType.ToString());
                 wifiPoint.WiFiSignals.Add(wifiSignal);
             }
 
@@ -133,7 +125,7 @@ namespace Wi_Fi_Map
         private StringBuilder CreateCsvReport(WiFiPointData wifiPoint)
         {
             StringBuilder networkInfo = new StringBuilder();
-            networkInfo.AppendLine("MAC,SSID,DecibelMilliwatts,Type,Lat,Long,Accuracy,Encryption");
+            networkInfo.AppendLine("MAC,SSID,DecibelMilliwatts,Type,Lat,Long,Encryption");
 
             foreach (var wifiSignal in wifiPoint.WiFiSignals)
             {
