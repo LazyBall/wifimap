@@ -1,26 +1,84 @@
 ﻿<Page
     x:Class="Wi_Fi_Map.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Wi_Fi_Map"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
-    >
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <RelativePanel>
+            <Button Name="SplitViewON" RelativePanel.AlignBottomWithPanel="True"  Content="&#xE700;" Click="SplitViewON_Click" Style="{StaticResource MyButtonStyle}"/>
+            <Button Name="BackButton" RelativePanel.RightOf="SplitViewON" Content="&#xE0C4;" Click="BackButton_Click" Style="{StaticResource MyButtonStyle}"/>
+            <TextBlock Name="TitleTextBlock" RelativePanel.RightOf="BackButton" FontSize="28" FontWeight="Bold" Margin="20,5,0,0"/>
+            <Button Name="SearchButton" RelativePanel.AlignRightWithPanel="True" Content="&#xE1A3;" Click="SearchButton_Click" Style="{StaticResource MyButtonStyle}"/>
+            <TextBox Name="SearchTextBox" RelativePanel.LeftOf="SearchButton" Height="48" Width="200" FontSize="24" PlaceholderText="Search"/>
+        </RelativePanel>
+        <SplitView Name="MySplitView" Grid.Row="1" DisplayMode="CompactOverlay" OpenPaneLength="200" CompactPaneLength="57" HorizontalAlignment="Stretch">
+            <SplitView.Pane >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ListBox SelectionMode="Single" Name="IconsListBox" SelectionChanged="IconsListBox_SelectionChanged" Grid.Row="0">
+                        <ListBoxItem Name="WifiListBoxItem">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE701;"  Style="{StaticResource MyListTextBoxStyle1}"/>
+                                <TextBlock Text="WIFI list" Style="{StaticResource MyListTextBoxStyle2}"/>
+                            </StackPanel>
+                        </ListBoxItem>
 
-        <TextBlock FontSize="36" Grid.RowSpan="2" >WiFi Scanner</TextBlock>
-        <StackPanel Name="spButtons" Grid.Row="1" Orientation="Horizontal">
-            <Button Name="btnScan" Click="BtnScan_Click" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" >Scan For Networks</Button>
-            <Button Name="btnScanRepeatedly" Click="BtnScanRepeatedly_Click" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" >Scan Repeatedly</Button>
-        </StackPanel>
-        <TextBox Name="txbReport" TextWrapping="Wrap" AcceptsReturn="True" Grid.Row="2"></TextBox>
+                        <ListBoxItem Name="MapListBoxItem" >
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE909;" Style="{StaticResource MyListTextBoxStyle1}"/>
+                                <TextBlock Text="Map"      Style="{StaticResource MyListTextBoxStyle2}"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Name="Postion" Tapped="Postion_Tapped">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE81D;"  Style="{StaticResource MyListTextBoxStyle1}"/>
+                                <TextBlock Text="Position"     Style="{StaticResource MyListTextBoxStyle2}"/>
+                            </StackPanel>
+                        </ListBoxItem>
+
+                        <ListBoxItem Name="Theme" Tapped="Theme_Tapped">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE708;"  Style="{StaticResource MyListTextBoxStyle1}"/>
+                                <TextBlock Text="Theme"     Style="{StaticResource MyListTextBoxStyle2}"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                    </ListBox>
+                    <StackPanel VerticalAlignment="Bottom">
+                        <Button  Name="ScanOnce" Content="&#xE72C;" Click="ScanOnce_ClickAsync" Style="{StaticResource MyButtonStyle}"/>
+                        <ToggleSwitch x:Name="ToogleSwitch" Margin="5,0,0,0" Toggled="ToggleSwitch_Toggled">
+                            <ToggleSwitch.OffContent>
+                                <TextBlock Text="Scan off" Style="{StaticResource MyListTextBoxStyle2}"/>
+                            </ToggleSwitch.OffContent>
+                            <ToggleSwitch.OnContent>
+                                <TextBlock Text="Scan on" Style="{StaticResource MyListTextBoxStyle2}"/>
+                            </ToggleSwitch.OnContent>
+                        </ToggleSwitch>
+                    </StackPanel>
+                </Grid>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Grid>
+                    <Frame Name="MyFrame" ></Frame>
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
     </Grid>
 </Page>

@@ -1,27 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Wi_Fi_Map
 {
     public class WiFiSignal
     {
-        public string MacAddress { get; set; }
+        public string BSSID { get; private set; }
 
-        public string Ssid { get; set; }
+        public string SSID { get; private set; }
 
-        public double NetworkRssiInDecibelMilliwatts { get; set; }
+        public double NetworkRssiInDecibelMilliwatts { get; private set; }
 
-        public string NetworkKind { get; set; }
+        public int ChannelCenterFrequencyInKilohertz { get; private set; }
 
-        public string PhysicalKind { get; set; }
+        public string Encryption { get; private set; }
 
-        public double ChannelCenterFrequencyInKilohertz { get; set; }
+        public WiFiSignal() { }
 
-        public string Encryption { get; set; }
-
-        //TODO: add security details
+        public WiFiSignal(string BSSID, string SSID, double networkRssiInDecibelMilliwatts,
+            int channelCenterFrequencyInKilohertz, string encryption)
+        {
+            this.BSSID = BSSID;
+            this.SSID = SSID;
+            this.NetworkRssiInDecibelMilliwatts = networkRssiInDecibelMilliwatts;
+            this.ChannelCenterFrequencyInKilohertz = channelCenterFrequencyInKilohertz;
+            this.Encryption = encryption;
+        }
     }
 }
