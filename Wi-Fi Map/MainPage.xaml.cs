@@ -22,7 +22,8 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.Services.Maps;
 
 namespace Wi_Fi_Map
-{
+{ 
+    ///Это комментарий я и хочу его в свою ветку
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
