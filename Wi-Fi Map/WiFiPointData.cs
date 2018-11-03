@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wi_Fi_Map
 {
@@ -11,19 +8,24 @@ namespace Wi_Fi_Map
     /// </summary>
     public class WiFiPointData
     {
-        public DateTimeOffset TimeStamp { get; set; }
+        public DateTimeOffset TimeStamp { get; private set; }
 
-        public double? Latitude { get; set; }
+        public double Latitude { get; private set; }
 
-        public double? Longitude { get; set; }
-
-        public double? Accuracy { get; set; }
+        public double Longitude { get; private set; }
 
         public List<WiFiSignal> WiFiSignals { get; set; }
 
         public WiFiPointData()
         {
             this.WiFiSignals = new List<WiFiSignal>();
+        }
+
+        public WiFiPointData(DateTimeOffset timeStamp, double latitude, double longtitude) : this()
+        {
+            this.TimeStamp = timeStamp;
+            this.Latitude = latitude;
+            this.Longitude = longtitude;
         }
     }
 }
