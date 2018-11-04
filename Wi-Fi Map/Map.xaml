@@ -16,6 +16,13 @@
                          MapServiceToken=" dKEGXhsATRR76h8Klgk5~MokPeHVLlJS-TRpScYOjpw~ArTM5cQ2FNhRYvfJJSiRWY6zk6SuoRG_mxG82HyhJtMEW-aV-uu3qR3bvZTjqCK-" 
                          Loaded="MyMap_Loaded"
                          Style="Road"
-                         ZoomLevelChanged="MyMap_ZoomLevelChanged"/>
+                         ZoomLevelChanged="MyMap_ZoomLevelChanged">
+        </Maps:MapControl>
+        <StackPanel x:Name="StackPanelPosition" HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Orientation="Horizontal"
+                Margin="24">
+            <TextBlock x:Name="TextBlockPosition" Text="&#xE81D;" Tapped="TextBlock_Tapped" Foreground="Blue" Style="{StaticResource MyListTextBoxStyle1}"/>
+        </StackPanel>
     </Grid>
 </Page>

@@ -66,13 +66,5 @@ namespace Wi_Fi_Map
             }
             AddData(list);
         }
-        public void AddFromIenum(IEnumerable<WiFiSignal> wiFiSignals)
-        {
-            //foreach (WiFiSignal el in wiFiSignals)
-            //{
-            //    _signals.Add(el);
-            //    _macAdresses.Add(el.MacAddress);
-            //}
-        }
     }
 }
