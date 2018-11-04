@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -51,7 +52,7 @@ namespace Wi_Fi_Map
         private void MyMap_ZoomLevelChanged(Windows.UI.Xaml.Controls.Maps.MapControl sender, object args)
         {
             MapData mapData = MapData.GetInstance();
-            mapData.CurrentZoom = MyMap.ZoomLevel;
+            mapData.CurrentZoom = MyMap.ZoomLevel;//хз зачем
             if (MyMap.ZoomLevel > mapData.MaxZoom)
             {
                 MyMap.ZoomLevel = mapData.MaxZoom;
@@ -80,25 +81,22 @@ namespace Wi_Fi_Map
         {
             GPScoords gPScoords = GPScoords.GetInstance();
             MapData mapData = MapData.GetInstance();
+
             MyMap.ColorScheme = mapData.Scheme;
-            
             MyMap.ZoomLevel = mapData.CurrentZoom;
-            BasicGeoposition geoposition = new BasicGeoposition();
-            geoposition.Latitude = mapData.Lat;
-            geoposition.Longitude = mapData.Lon;
+            BasicGeoposition geoposition = CreateBasicGeoposition(mapData.Lat, mapData.Lon);
             MyMap.Center = new Geopoint(geoposition);
+
             //Отображение местоположения на карте
-            
             if (gPScoords.Lat != -1 && gPScoords.Lon != -1)
             {
-                BasicGeoposition geopositionIcon = new BasicGeoposition();
-                geopositionIcon.Latitude = gPScoords.Lat;
-                geopositionIcon.Longitude = gPScoords.Lon;
+                BasicGeoposition geopositionIcon = CreateBasicGeoposition(gPScoords.Lat, gPScoords.Lon);
                 Geopoint point = new Geopoint(geopositionIcon);
-                point = new Geopoint(geopositionIcon);
-                Image img = new Image();
-                img.Source = new BitmapImage(new Uri("ms-appx:///Assets/1.png"));
-                img.Stretch = Stretch.None;
+                Image img = new Image
+                {
+                    Source = new BitmapImage(new Uri("ms-appx:///Assets/1.png")),
+                    Stretch = Stretch.None
+                };
                 MapControl.SetNormalizedAnchorPoint(img, new Point(0.5, 0.5));
                 MapControl.SetLocation(img, point);
                 MyMap.Children.Clear();
@@ -107,19 +105,38 @@ namespace Wi_Fi_Map
             //Добавление точек вайфай на карту
             foreach (WiFiSignalWithGeoposition el in mapData._signals)
             {
-                BasicGeoposition geopositionIcon = new BasicGeoposition();
-                geopositionIcon = new BasicGeoposition();
-                geopositionIcon.Latitude = el.Latitude;
-                geopositionIcon.Longitude = el.Longitude;
+                BasicGeoposition geopositionIcon = CreateBasicGeoposition(el.Latitude, el.Longitude);
                 Geopoint point = new Geopoint(geopositionIcon);
-                point = new Geopoint(geopositionIcon);
-                MapIcon mapIcon = new MapIcon();
-                mapIcon.Location = point;
-                mapIcon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/region.png"));
-                mapIcon.NormalizedAnchorPoint = new Point(0.5, 0.5);
-                mapIcon.Title = el.BSSID;
+                MapIcon mapIcon = new MapIcon
+                {
+                    Location = point,
+                    Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/region.png")),
+                    NormalizedAnchorPoint = new Point(0.5, 0.5),
+                    Title = el.BSSID
+                };
                 MyMap.MapElements.Add(mapIcon);
             }
+        }
+
+        private static BasicGeoposition CreateBasicGeoposition(double x,double y)
+        {
+            return new BasicGeoposition
+            {
+                Latitude = x,
+                Longitude = y
+            };
+        }
+
+        private void TextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            GPScoords gps = GPScoords.GetInstance();
+            MapData mapData = MapData.GetInstance();
+            if (gps.Lat != -1 && gps.Lon != -1)
+            {
+                mapData.Lat = gps.Lat;
+                mapData.Lon = gps.Lon;
+            }
+            MyMap_Loaded(sender,e);
         }
     }
 }
