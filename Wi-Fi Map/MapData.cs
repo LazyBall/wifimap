@@ -52,7 +52,16 @@ namespace Wi_Fi_Map
             List<WiFiSignalWithGeoposition> list = new List<WiFiSignalWithGeoposition>();
             foreach(var signal in wiFiPoint.WiFiSignals)
             {
-                WiFiSignalWithGeoposition sg = new WiFiSignalWithGeoposition(signal, wiFiPoint.TimeStamp, wiFiPoint.Latitude, wiFiPoint.Longitude);
+                WiFiSignalWithGeoposition sg = new WiFiSignalWithGeoposition
+                {
+                    BSSID=signal.BSSID,
+                    Encryption=signal.Encryption,
+                    Latitude=wiFiPoint.Latitude,
+                    Longitude=wiFiPoint.Longitude,
+                    SignalStrength=signal.SignalStrength,
+                    SSID=signal.SSID,
+                    //TimeStamp=wiFiPoint.TimeStamp
+                };
                 list.Add(sg);
             }
             AddData(list);
