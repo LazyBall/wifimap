@@ -47,12 +47,12 @@
                             </StackPanel>
                         </ListBoxItem>
 
-                        <ListBoxItem Name="Postion" Tapped="Postion_Tapped">
+                        <!--<ListBoxItem Name="Postion" Tapped="Postion_Tapped">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE81D;"  Style="{StaticResource MyListTextBoxStyle1}"/>
                                 <TextBlock Text="Position"     Style="{StaticResource MyListTextBoxStyle2}"/>
                             </StackPanel>
-                        </ListBoxItem>
+                        </ListBoxItem>-->
 
                         <ListBoxItem Name="Theme" Tapped="Theme_Tapped">
                             <StackPanel Orientation="Horizontal">

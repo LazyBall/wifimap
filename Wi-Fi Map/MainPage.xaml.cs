@@ -23,7 +23,6 @@ using Windows.Services.Maps;
 
 namespace Wi_Fi_Map
 { 
-    ///Это комментарий я и хочу его в свою ветку
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -99,6 +98,8 @@ namespace Wi_Fi_Map
                 StringBuilder networkInfo = await RunWifiScan();
                 MapData mapData = MapData.GetInstance();
                 mapData.InfoAboutSignals = networkInfo.ToString();
+                if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
+                //else MyFrame.Navigate(typeof(Map));
             }
             catch (Exception ex)
             {
@@ -205,21 +206,34 @@ namespace Wi_Fi_Map
                 string addressToGeocode = SearchTextBox.Text;
                 MapData mapData = MapData.GetInstance();
                 // The nearby location to use as a query hint.
-                BasicGeoposition queryHint = new BasicGeoposition();
-                queryHint.Latitude = 55.753215;
-                queryHint.Longitude = 37.622504;
+                BasicGeoposition queryHint = new BasicGeoposition
+                {
+                    Latitude = 55.753215,
+                    Longitude = 37.622504
+                };
                 Geopoint hintPoint = new Geopoint(queryHint);
                 MapLocationFinderResult result =
                       await MapLocationFinder.FindLocationsAsync(addressToGeocode, hintPoint, 3);
                 if (result.Status == MapLocationFinderStatus.Success)
                 {
-                    var lat = result.Locations[0].Point.Position.Latitude;
-                    var lon = result.Locations[0].Point.Position.Longitude;
-                    mapData.Lat = lat;
-                    mapData.Lon = lon;
+                    try
+                    {
+                        mapData.Lat = result.Locations[0].Point.Position.Latitude;
+                        mapData.Lon = result.Locations[0].Point.Position.Longitude;
+                    }
+                    catch (ArgumentOutOfRangeException ex)
+                    {
+                        MessageDialog md = new MessageDialog("По вашему запросу ничего не найдено!");
+                        await md.ShowAsync();
+                    }
                     if (addressToGeocode.Length > 11) mapData.CurrentZoom = 17;
                     else mapData.CurrentZoom = 12;
                     MyFrame.Navigate(typeof(Map));
+                }
+                else
+                {
+                    MessageDialog md = new MessageDialog("Ничего не найдено! \nПопробуйте еще раз!");
+                    await md.ShowAsync();
                 }
                 this.SearchTextBox.Text = "";
             } //MyMap.ColorScheme = MapColorScheme.Dark;
@@ -269,8 +283,9 @@ namespace Wi_Fi_Map
                 StringBuilder networkInfo = await RunWifiScan();
                 MapData mapData = MapData.GetInstance();
                 mapData.InfoAboutSignals = networkInfo.ToString();
+                if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
+                else MyFrame.Navigate(typeof(Map));
                 //MyFrame.Navigate(typeof(Map), WiFiPointData a);
-                //this.txbReport.Text = networkInfo.ToString();
             }
             catch (Exception ex)
             {
