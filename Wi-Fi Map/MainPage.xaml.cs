@@ -121,10 +121,19 @@ namespace Wi_Fi_Map
 
             foreach (var availableNetwork in report.AvailableNetworks)
             {
-                WiFiSignal wifiSignal = new WiFiSignal(availableNetwork.Bssid, availableNetwork.Ssid,
-                    availableNetwork.NetworkRssiInDecibelMilliwatts,
-                    availableNetwork.ChannelCenterFrequencyInKilohertz,
-                    availableNetwork.SecuritySettings.NetworkEncryptionType.ToString());
+                WiFiSignal wifiSignal = new WiFiSignal
+                {
+                    BeaconInterval = availableNetwork.BeaconInterval.TotalSeconds.ToString(),
+                    BSSID = availableNetwork.Bssid,
+                    ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
+                    Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString(),
+                    IsWiFiDirect = availableNetwork.IsWiFiDirect,
+                    NetworkKind = availableNetwork.NetworkKind.ToString(),
+                    PhyKind = availableNetwork.PhyKind.ToString(),
+                    SignalStrength = (short)availableNetwork.NetworkRssiInDecibelMilliwatts,
+                    SSID = availableNetwork.Ssid,
+                    Uptime = availableNetwork.Uptime.TotalHours.ToString()
+                };               
                 wifiPoint.WiFiSignals.Add(wifiSignal);                
             }
             MapData mapData = MapData.GetInstance();
@@ -146,7 +155,7 @@ namespace Wi_Fi_Map
             {
                 networkInfo.Append($"{wifiSignal.BSSID}, ");
                 networkInfo.Append($"{wifiSignal.SSID}, ");
-                networkInfo.Append($"{wifiSignal.NetworkRssiInDecibelMilliwatts}, ");
+                networkInfo.Append($"{wifiSignal.SignalStrength}, ");
                 networkInfo.Append($"{wifiPoint.Latitude}, ");
                 networkInfo.Append($"{wifiPoint.Longitude}, ");
                 networkInfo.Append($"{wifiSignal.Encryption} ");
