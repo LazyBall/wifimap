@@ -1,33 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Globalization;
 
 
 namespace Wi_Fi_Map
 {
-    public class DataBase
+    public static class DataBase
     {
-        private readonly string _dataTable;
-        private readonly string _connectionString;
-        public DataBase(string dataSource, string userID, string password, string initialCatalog,
-            string dataTable)
+        private static readonly string _dataSource = "wifisqlserver.database.windows.net";
+        private static readonly string _userID = "User";
+        private static readonly string _password = "QyPc17ebb4GT";
+        private static readonly string _initialCatalog = "wifidb";
+        private static readonly string _dataTable = "WiFi";
+        private static readonly string _connectionString = (new SqlConnectionStringBuilder
         {
-            var _sb = new SqlConnectionStringBuilder
+            DataSource = _dataSource,
+            UserID = _userID,
+            Password = _password,
+            InitialCatalog = _initialCatalog
+        }).ConnectionString;
+
+        public static void Insert(WiFiPointData wiFiPoint)
+        {
+            foreach (var signal in wiFiPoint.WiFiSignals)
             {
-                DataSource = dataSource,
-                UserID = userID,
-                Password = password,
-                InitialCatalog = initialCatalog
-            };
-            _connectionString = _sb.ConnectionString;
-            _dataTable = dataTable;
+                WiFiSignalWithGeoposition sg = new WiFiSignalWithGeoposition
+                {
+                    BSSID = signal.BSSID,
+                    Encryption = signal.Encryption,
+                    Latitude = wiFiPoint.Latitude,
+                    Longitude = wiFiPoint.Longitude,
+                    SignalStrength = signal.SignalStrength,
+                    SSID = signal.SSID,
+                };
+                Insert(sg);
+            }
         }
 
-        public void Insert(WiFiSignalWithGeoposition wiFiSignal)
+        public static void Insert(WiFiSignalWithGeoposition wiFiSignal)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -37,26 +47,27 @@ namespace Wi_Fi_Map
                     CommandText = SqlCheckRecord(wiFiSignal.BSSID),
                     Connection = connection
                 };
-                bool isRecord = ((bool)command.ExecuteScalar());
-                if (isRecord)
-                {
-                    command.CommandText =
-                        SqlUpdate(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
-                        wiFiSignal.Longitude, ((short)wiFiSignal.SignalStrength),
-                        wiFiSignal.Encryption);
-                }
-                else
+                object _signalStregth = command.ExecuteScalar();
+                if (_signalStregth == null)
                 {
                     command.CommandText =
                         SqlInsert(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
-                        wiFiSignal.Longitude, ((short)wiFiSignal.SignalStrength),
+                        wiFiSignal.Longitude, wiFiSignal.SignalStrength,
                         wiFiSignal.Encryption);
+                    command.ExecuteNonQuery();
                 }
-                command.ExecuteNonQuery();
+                else if (wiFiSignal.SignalStrength > ((short)_signalStregth))
+                {
+                    command.CommandText =
+                        SqlUpdate(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
+                        wiFiSignal.Longitude, wiFiSignal.SignalStrength,
+                        wiFiSignal.Encryption);
+                    command.ExecuteNonQuery();
+                }
             }
         }
 
-        public List<WiFiSignalWithGeoposition> SelectAll()
+        public static List<WiFiSignalWithGeoposition> SelectAll()
         {
             var _list = new List<WiFiSignalWithGeoposition>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -89,30 +100,31 @@ namespace Wi_Fi_Map
             return _list;
         }
 
-        private string SqlInsert(string BSSID, string SSID, double Latitude, double Longitude,
+        private static string SqlInsert(string BSSID, string SSID, double Latitude, double Longitude,
             short SignalStrength, string Encryption)
         {
             return $@"INSERT INTO {_dataTable} 
-                         (BSSID, SSID, Latitude, Longitude, SignalStrength, Encryption)
-                                       VALUES 
-                         ('{BSSID}', '{SSID}', {Latitude}, {Longitude}, {SignalStrength}, '{Encryption}')";
+                      (BSSID, SSID, Latitude, Longitude, SignalStrength, Encryption)
+                                           VALUES 
+                      ('{BSSID}', '{SSID}', {Latitude.ToString(new CultureInfo("en-US"))},
+                        {Longitude.ToString(new CultureInfo("en-US"))}, {SignalStrength}, '{Encryption}')";
         }
 
-        private string SqlUpdate(string BSSID, string SSID, double Latitude, double Longitude,
+        private static string SqlUpdate(string BSSID, string SSID, double Latitude, double Longitude,
             short SignalStrength, string Encryption)
         {
             return $@"UPDATE {_dataTable} 
-                    SET SSID='{SSID}', Latitude={Latitude},  Longitude={Longitude},
-                    SignalStrength={SignalStrength}, Encryption='{Encryption}'
-                    WHERE BSSID='{BSSID}'";
+                    SET SSID='{SSID}', Latitude={Latitude.ToString(new CultureInfo("en-US"))},
+                    Longitude={Longitude.ToString(new CultureInfo("en-US"))}, SignalStrength={SignalStrength},
+                    Encryption='{Encryption}' WHERE BSSID='{BSSID}'";
         }
 
-        private string SqlCheckRecord(string BSSID)
+        private static string SqlCheckRecord(string BSSID)
         {
-            return $@"SELECT Count(BSSID) FROM {_dataTable} WHERE BSSID='{BSSID}' limit 1";
+            return $@"SELECT TOP(1) SignalStrength FROM {_dataTable} WHERE BSSID='{BSSID}'";
         }
 
-        private string SqlSelectAll()
+        private static string SqlSelectAll()
         {
             return $@"SELECT * FROM {_dataTable}";
         }
