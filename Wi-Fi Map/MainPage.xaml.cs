@@ -28,7 +28,7 @@ namespace Wi_Fi_Map
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private WiFiScanner _wifiScanner;
+        private WiFiScanner _wifiScanner;      
 
         public MainPage()
         {
@@ -137,11 +137,14 @@ namespace Wi_Fi_Map
                 };               
                 wifiPoint.WiFiSignals.Add(wifiSignal);                
             }
+            DataBase.Insert(wifiPoint);
             MapData mapData = MapData.GetInstance();
-            mapData.AddData(wifiPoint);
+            mapData.AddData(DataBase.SelectAll());
             GPScoords gPScoords = GPScoords.GetInstance();
             gPScoords.Lat = wifiPoint.Latitude;
             gPScoords.Lon = wifiPoint.Longitude;
+            
+
             StringBuilder networkInfo = CreateCsvReport(wifiPoint);
 
             return networkInfo;
@@ -230,7 +233,7 @@ namespace Wi_Fi_Map
                         mapData.Lat = result.Locations[0].Point.Position.Latitude;
                         mapData.Lon = result.Locations[0].Point.Position.Longitude;
                     }
-                    catch (ArgumentOutOfRangeException ex)
+                    catch (ArgumentOutOfRangeException)
                     {
                         MessageDialog md = new MessageDialog("По вашему запросу ничего не найдено!");
                         await md.ShowAsync();
