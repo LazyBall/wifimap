@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid Background="Azure">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock x:Name="txbReport" Margin="5,5,5,5" TextWrapping="Wrap"  ScrollViewer.VerticalScrollBarVisibility="Auto"  LineHeight="24"
                  FontSize="20" FontFamily="Verdana" FontStretch="Normal" FontStyle="Normal" ></TextBlock>
     </Grid>
