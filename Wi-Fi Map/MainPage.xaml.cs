@@ -28,7 +28,7 @@ namespace Wi_Fi_Map
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private WiFiScanner _wifiScanner;
+        private WiFiScanner _wifiScanner;      
 
         public MainPage()
         {
@@ -122,17 +122,29 @@ namespace Wi_Fi_Map
 
             foreach (var availableNetwork in report.AvailableNetworks)
             {
-                WiFiSignal wifiSignal = new WiFiSignal(availableNetwork.Bssid, availableNetwork.Ssid,
-                    availableNetwork.NetworkRssiInDecibelMilliwatts,
-                    availableNetwork.ChannelCenterFrequencyInKilohertz,
-                    availableNetwork.SecuritySettings.NetworkEncryptionType.ToString());
+                WiFiSignal wifiSignal = new WiFiSignal
+                {
+                    BeaconInterval = availableNetwork.BeaconInterval.TotalSeconds.ToString(),
+                    BSSID = availableNetwork.Bssid,
+                    ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
+                    Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString(),
+                    IsWiFiDirect = availableNetwork.IsWiFiDirect,
+                    NetworkKind = availableNetwork.NetworkKind.ToString(),
+                    PhyKind = availableNetwork.PhyKind.ToString(),
+                    SignalStrength = (short)availableNetwork.NetworkRssiInDecibelMilliwatts,
+                    SSID = availableNetwork.Ssid,
+                    Uptime = availableNetwork.Uptime.TotalHours.ToString()
+                };               
                 wifiPoint.WiFiSignals.Add(wifiSignal);                
             }
+            DataBase.Insert(wifiPoint);
             MapData mapData = MapData.GetInstance();
-            mapData.AddData(wifiPoint);
+            mapData.AddData(DataBase.SelectAll());
             GPScoords gPScoords = GPScoords.GetInstance();
             gPScoords.Lat = wifiPoint.Latitude;
             gPScoords.Lon = wifiPoint.Longitude;
+            
+
             StringBuilder networkInfo = CreateCsvReport(wifiPoint);
 
             return networkInfo;
@@ -147,7 +159,7 @@ namespace Wi_Fi_Map
             {
                 networkInfo.Append($"{wifiSignal.BSSID}, ");
                 networkInfo.Append($"{wifiSignal.SSID}, ");
-                networkInfo.Append($"{wifiSignal.NetworkRssiInDecibelMilliwatts}, ");
+                networkInfo.Append($"{wifiSignal.SignalStrength}, ");
                 networkInfo.Append($"{wifiPoint.Latitude}, ");
                 networkInfo.Append($"{wifiPoint.Longitude}, ");
                 networkInfo.Append($"{wifiSignal.Encryption} ");
@@ -221,7 +233,7 @@ namespace Wi_Fi_Map
                         mapData.Lat = result.Locations[0].Point.Position.Latitude;
                         mapData.Lon = result.Locations[0].Point.Position.Longitude;
                     }
-                    catch (ArgumentOutOfRangeException ex)
+                    catch (ArgumentOutOfRangeException)
                     {
                         MessageDialog md = new MessageDialog("По вашему запросу ничего не найдено!");
                         await md.ShowAsync();
