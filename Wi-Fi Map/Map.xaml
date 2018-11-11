@@ -7,14 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    NavigationCacheMode="Required">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Maps:MapControl x:Name="MyMap" Grid.Row="0" 
                          MapServiceToken=" dKEGXhsATRR76h8Klgk5~MokPeHVLlJS-TRpScYOjpw~ArTM5cQ2FNhRYvfJJSiRWY6zk6SuoRG_mxG82HyhJtMEW-aV-uu3qR3bvZTjqCK-" 
-                         Loaded="MyMap_Loaded"
+                         
                          Style="Road"
                          ZoomLevelChanged="MyMap_ZoomLevelChanged">
         </Maps:MapControl>
