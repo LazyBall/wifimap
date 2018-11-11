@@ -99,7 +99,7 @@ namespace Wi_Fi_Map
                 MapData mapData = MapData.GetInstance();
                 mapData.InfoAboutSignals = networkInfo.ToString();
                 if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
-                //else MyFrame.Navigate(typeof(Map));
+                else MyFrame.Navigate(typeof(Map),GPScoords.GetInstance());
             }
             catch (Exception ex)
             {
@@ -240,7 +240,7 @@ namespace Wi_Fi_Map
                     }
                     if (addressToGeocode.Length > 11) mapData.CurrentZoom = 17;
                     else mapData.CurrentZoom = 12;
-                    MyFrame.Navigate(typeof(Map));
+                    MyFrame.Navigate(typeof(Map), mapData);
                 }
                 else
                 {
@@ -276,17 +276,17 @@ namespace Wi_Fi_Map
             MyFrame.Navigate(typeof(Map));
         }
 
-        private void Postion_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            GPScoords gps = GPScoords.GetInstance();
-            MapData mapData = MapData.GetInstance();
-            if (gps.Lat != -1 && gps.Lon != -1)
-            {
-                mapData.Lat = gps.Lat;
-                mapData.Lon = gps.Lon;
-            }
-            MyFrame.Navigate(typeof(Map));
-        }
+        //private void Postion_Tapped(object sender, TappedRoutedEventArgs e)
+        //{
+        //    GPScoords gps = GPScoords.GetInstance();
+        //    MapData mapData = MapData.GetInstance();
+        //    if (gps.Lat != -1 && gps.Lon != -1)
+        //    {
+        //        mapData.Lat = gps.Lat;
+        //        mapData.Lon = gps.Lon;
+        //    }
+        //    MyFrame.Navigate(typeof(Map));
+        //}
 
         private async void ScanOnce_ClickAsync(object sender, RoutedEventArgs e)
         {
@@ -296,7 +296,7 @@ namespace Wi_Fi_Map
                 MapData mapData = MapData.GetInstance();
                 mapData.InfoAboutSignals = networkInfo.ToString();
                 if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
-                else MyFrame.Navigate(typeof(Map));
+                else MyFrame.Navigate(typeof(Map),GPScoords.GetInstance());
                 //MyFrame.Navigate(typeof(Map), WiFiPointData a);
             }
             catch (Exception ex)
