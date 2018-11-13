@@ -63,34 +63,6 @@ namespace Wi_Fi_Map
             }
         }
 
-        //private async void BtnScan_Click(object sender, RoutedEventArgs e)
-        //{
-        //    this.btnScan.IsEnabled = false;
-
-        //    try
-        //    {
-        //        StringBuilder networkInfo = await RunWifiScan();
-        //        this.txbReport.Text = networkInfo.ToString();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageDialog md = new MessageDialog(ex.Message);
-        //        await md.ShowAsync();
-        //    }
-
-        //    this.btnScan.IsEnabled = true;
-        //}
-
-        //private async void BtnScanRepeatedly_Click(object sender, RoutedEventArgs e)
-        //{
-        //    DispatcherTimer timer = new DispatcherTimer
-        //    {
-        //        Interval = new TimeSpan(0, 0, 10)
-        //    };
-        //    timer.Tick += Timer_Tick;
-        //    timer.Start();
-        //}
-
         private async void Timer_Tick(object sender, object e)
         {
             try
@@ -238,8 +210,6 @@ namespace Wi_Fi_Map
                         MessageDialog md = new MessageDialog("По вашему запросу ничего не найдено!");
                         await md.ShowAsync();
                     }
-                    if (addressToGeocode.Length > 11) mapData.CurrentZoom = 17;
-                    else mapData.CurrentZoom = 12;
                     MyFrame.Navigate(typeof(Map), mapData);
                 }
                 else
@@ -276,18 +246,6 @@ namespace Wi_Fi_Map
             MyFrame.Navigate(typeof(Map));
         }
 
-        //private void Postion_Tapped(object sender, TappedRoutedEventArgs e)
-        //{
-        //    GPScoords gps = GPScoords.GetInstance();
-        //    MapData mapData = MapData.GetInstance();
-        //    if (gps.Lat != -1 && gps.Lon != -1)
-        //    {
-        //        mapData.Lat = gps.Lat;
-        //        mapData.Lon = gps.Lon;
-        //    }
-        //    MyFrame.Navigate(typeof(Map));
-        //}
-
         private async void ScanOnce_ClickAsync(object sender, RoutedEventArgs e)
         {
             try
@@ -297,7 +255,6 @@ namespace Wi_Fi_Map
                 mapData.InfoAboutSignals = networkInfo.ToString();
                 if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
                 else MyFrame.Navigate(typeof(Map),GPScoords.GetInstance());
-                //MyFrame.Navigate(typeof(Map), WiFiPointData a);
             }
             catch (Exception ex)
             {

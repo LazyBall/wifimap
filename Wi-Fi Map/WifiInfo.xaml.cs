@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -29,23 +30,35 @@ namespace Wi_Fi_Map
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             MapData mapData = MapData.GetInstance();
-            this.txbReport.Text = mapData.InfoAboutSignals;
-            //if(e.Parameter!=null) this.txbReport.Text = e.Parameter.ToString();
-            //MapData mapData = e.Parameter as MapData;
-            //if (e.Parameter != null)
-            //{
-            //    MapData mapData = MapData.GetInstance();
-            //    if (mapData._addSignals.Count() > 0)
-            //    {
-            //        this.AddPointsToMap(mapData._addSignals);
-            //        mapData._addSignals.Clear();
-            //    }
-            //    if (mapData._removeSignals.Count() > 0)
-            //    {
-            //        this.RemovePointsFromMap(mapData._removeSignals);
-            //        mapData._removeSignals.Clear();
-            //    }
-            //}
+            string[] infoByOne = mapData.InfoAboutSignals.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] names = infoByOne[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var infoByOne1=infoByOne.ToList();
+            infoByOne1.RemoveAt(0);
+            foreach (string s in infoByOne1)
+            {
+                string[] namecomp=s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                Grid gr = new Grid();
+                TextBlock tb = new TextBlock
+                {
+                    LineHeight = 21,
+                    FontSize = 20,
+                    FontFamily = new FontFamily("Verdana"),
+                    Margin = new Thickness(5, 5, 5, 5),
+                    Foreground = new SolidColorBrush(Colors.DimGray)
+                };
+                for(int i=0;i<names.Length;i++)
+                {
+                    tb.Text += names[i] + namecomp[i];
+                }
+                gr.Background = new SolidColorBrush(Colors.PowderBlue);
+                gr.Children.Add(tb);
+                stackPanelInfo.Children.Add(gr);
+                gr = new Grid
+                {
+                    Height = 10
+                };
+                stackPanelInfo.Children.Add(gr);
+            }
         }
     }
 }
