@@ -7,26 +7,32 @@ using System.Globalization;
 namespace Wi_Fi_Map
 {
     //Singleton pattern
-    public sealed class Database
+    public sealed class Database : IDisposable
     {
         private static readonly Lazy<Database> _dataBase = new Lazy<Database>(() => new Database());
         private readonly string _dataTable;
-        private readonly string _connectionString;
+        private readonly SqlConnection _connection;
 
         private Database()
         {
+
+            // Единственные заполняемые данные для подключения к базе данных
             string dataSource = "wifisqlserver.database.windows.net";
             string userID = "User";
             string password = "QyPc17ebb4GT";
             string initialCatalog = "wifidb";
             _dataTable = "WiFi";
-            _connectionString = (new SqlConnectionStringBuilder
+            //
+
+            string connectionString = (new SqlConnectionStringBuilder
             {
                 DataSource = dataSource,
                 UserID = userID,
                 Password = password,
                 InitialCatalog = initialCatalog
             }).ConnectionString;
+            _connection = new SqlConnection(connectionString);
+            _connection.Open();
         }
 
         public static Database Instance
@@ -56,64 +62,57 @@ namespace Wi_Fi_Map
 
         public void Insert(WiFiSignalWithGeoposition wiFiSignal)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            var command = new SqlCommand
             {
-                connection.Open();
-                var command = new SqlCommand
-                {
-                    CommandText = SqlCheckRecord(wiFiSignal.BSSID),
-                    Connection = connection
-                };
-                object _signalStregth = command.ExecuteScalar();
-                if (_signalStregth == null)
-                {
-                    command.CommandText =
-                        SqlInsert(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
-                        wiFiSignal.Longitude, wiFiSignal.SignalStrength,
-                        wiFiSignal.Encryption);
-                    command.ExecuteNonQuery();
-                }
-                else if (wiFiSignal.SignalStrength > ((short)_signalStregth))
-                {
-                    command.CommandText =
-                        SqlUpdate(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
-                        wiFiSignal.Longitude, wiFiSignal.SignalStrength,
-                        wiFiSignal.Encryption);
-                    command.ExecuteNonQuery();
-                }
+                CommandText = SqlCheckRecord(wiFiSignal.BSSID),
+                Connection = _connection
+            };
+            object _signalStregth = command.ExecuteScalar();
+            if (_signalStregth == null)
+            {
+                command.CommandText =
+                    SqlInsert(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
+                    wiFiSignal.Longitude, wiFiSignal.SignalStrength,
+                    wiFiSignal.Encryption);
+                command.ExecuteNonQuery();
+            }
+            else if (wiFiSignal.SignalStrength > ((short)_signalStregth))
+            {
+                command.CommandText =
+                    SqlUpdate(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
+                    wiFiSignal.Longitude, wiFiSignal.SignalStrength,
+                    wiFiSignal.Encryption);
+                command.ExecuteNonQuery();
             }
         }
 
         public List<WiFiSignalWithGeoposition> SelectAll()
         {
             var _list = new List<WiFiSignalWithGeoposition>();
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+
+            var command = new SqlCommand
             {
-                connection.Open();
-                var command = new SqlCommand
+                CommandText = SqlSelectAll(),
+                Connection = _connection
+            };
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows) // если есть данные
+            {
+                while (reader.Read()) // построчно считываем данные
                 {
-                    CommandText = SqlSelectAll(),
-                    Connection = connection
-                };
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows) // если есть данные
-                {
-                    while (reader.Read()) // построчно считываем данные
+                    var wifiSignal = new WiFiSignalWithGeoposition
                     {
-                        var wifiSignal = new WiFiSignalWithGeoposition
-                        {
-                            BSSID = reader.GetString(0),
-                            SSID = reader.GetString(1),
-                            Latitude = reader.GetDouble(2),
-                            Longitude = reader.GetDouble(3),
-                            SignalStrength = reader.GetInt16(4),
-                            Encryption = reader.GetString(5),
-                        };
-                        _list.Add(wifiSignal);
-                    }
+                        BSSID = reader.GetString(0),
+                        SSID = reader.GetString(1),
+                        Latitude = reader.GetDouble(2),
+                        Longitude = reader.GetDouble(3),
+                        SignalStrength = reader.GetInt16(4),
+                        Encryption = reader.GetString(5),
+                    };
+                    _list.Add(wifiSignal);
                 }
-                reader.Dispose();
             }
+            reader.Dispose();
             return _list;
         }
 
@@ -144,6 +143,11 @@ namespace Wi_Fi_Map
         private string SqlSelectAll()
         {
             return $@"SELECT * FROM {_dataTable}";
+        }
+
+        public void Dispose()
+        {
+            _connection.Dispose();
         }
     }
 }
