@@ -1,26 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
 
 
 namespace Wi_Fi_Map
 {
-    public static class DataBase
+    //Singleton pattern
+    public sealed class Database
     {
-        private static readonly string _dataSource = "wifisqlserver.database.windows.net";
-        private static readonly string _userID = "User";
-        private static readonly string _password = "QyPc17ebb4GT";
-        private static readonly string _initialCatalog = "wifidb";
-        private static readonly string _dataTable = "WiFi";
-        private static readonly string _connectionString = (new SqlConnectionStringBuilder
-        {
-            DataSource = _dataSource,
-            UserID = _userID,
-            Password = _password,
-            InitialCatalog = _initialCatalog
-        }).ConnectionString;
+        private static readonly Lazy<Database> _dataBase = new Lazy<Database>(() => new Database());
+        private readonly string _dataTable;
+        private readonly string _connectionString;
 
-        public static void Insert(WiFiPointData wiFiPoint)
+        private Database()
+        {
+            string dataSource = "wifisqlserver.database.windows.net";
+            string userID = "User";
+            string password = "QyPc17ebb4GT";
+            string initialCatalog = "wifidb";
+            _dataTable = "WiFi";
+            _connectionString = (new SqlConnectionStringBuilder
+            {
+                DataSource = dataSource,
+                UserID = userID,
+                Password = password,
+                InitialCatalog = initialCatalog
+            }).ConnectionString;
+        }
+
+        public static Database Instance
+        {
+            get
+            {
+                return _dataBase.Value;
+            }
+        }
+
+        public void Insert(WiFiPointData wiFiPoint)
         {
             foreach (var signal in wiFiPoint.WiFiSignals)
             {
@@ -37,7 +54,7 @@ namespace Wi_Fi_Map
             }
         }
 
-        public static void Insert(WiFiSignalWithGeoposition wiFiSignal)
+        public void Insert(WiFiSignalWithGeoposition wiFiSignal)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -67,7 +84,7 @@ namespace Wi_Fi_Map
             }
         }
 
-        public static List<WiFiSignalWithGeoposition> SelectAll()
+        public List<WiFiSignalWithGeoposition> SelectAll()
         {
             var _list = new List<WiFiSignalWithGeoposition>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -100,7 +117,7 @@ namespace Wi_Fi_Map
             return _list;
         }
 
-        private static string SqlInsert(string BSSID, string SSID, double Latitude, double Longitude,
+        private string SqlInsert(string BSSID, string SSID, double Latitude, double Longitude,
             short SignalStrength, string Encryption)
         {
             return $@"INSERT INTO {_dataTable} 
@@ -110,7 +127,7 @@ namespace Wi_Fi_Map
                         {Longitude.ToString(new CultureInfo("en-US"))}, {SignalStrength}, '{Encryption}')";
         }
 
-        private static string SqlUpdate(string BSSID, string SSID, double Latitude, double Longitude,
+        private string SqlUpdate(string BSSID, string SSID, double Latitude, double Longitude,
             short SignalStrength, string Encryption)
         {
             return $@"UPDATE {_dataTable} 
@@ -119,12 +136,12 @@ namespace Wi_Fi_Map
                     Encryption='{Encryption}' WHERE BSSID='{BSSID}'";
         }
 
-        private static string SqlCheckRecord(string BSSID)
+        private string SqlCheckRecord(string BSSID)
         {
             return $@"SELECT TOP(1) SignalStrength FROM {_dataTable} WHERE BSSID='{BSSID}'";
         }
 
-        private static string SqlSelectAll()
+        private string SqlSelectAll()
         {
             return $@"SELECT * FROM {_dataTable}";
         }
