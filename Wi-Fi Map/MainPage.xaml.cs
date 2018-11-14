@@ -109,9 +109,10 @@ namespace Wi_Fi_Map
                 };               
                 wifiPoint.WiFiSignals.Add(wifiSignal);                
             }
-            DataBase.Insert(wifiPoint);
+            var db = Database.Instance;
+            db.Insert(wifiPoint);
             MapData mapData = MapData.GetInstance();
-            mapData.AddData(DataBase.SelectAll());
+            mapData.AddData(db.SelectAll());
             GPScoords gPScoords = GPScoords.GetInstance();
             gPScoords.Lat = wifiPoint.Latitude;
             gPScoords.Lon = wifiPoint.Longitude;
