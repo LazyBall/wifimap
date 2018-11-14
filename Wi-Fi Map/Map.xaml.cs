@@ -76,10 +76,10 @@ namespace Wi_Fi_Map
         {
             Geopoint point = new Geopoint(geoposition);
             MyMap.Center = new Geopoint(geoposition);
-
+            string fileName = "ms-appx:///Assets/circle-blue-overlay50.png";
             Image img = new Image
             {
-                Source = new BitmapImage(new Uri("ms-appx:///Assets/1.png")),
+                Source = new BitmapImage(new Uri(fileName)),
                 Stretch = Stretch.None
             };
 
@@ -92,10 +92,12 @@ namespace Wi_Fi_Map
         private void MyMap_ZoomLevelChanged(Windows.UI.Xaml.Controls.Maps.MapControl sender, object args)
         {
             MapData mapData = MapData.GetInstance();
-            if (MyMap.ZoomLevel > 17)
+            if (MyMap.ZoomLevel < 9) MyMap.ZoomLevel = 9;
+            if (MyMap.ZoomLevel > 20) MyMap.ZoomLevel = 20;
+            if (MyMap.ZoomLevel > 18)
             {
                 foreach (MapIcon el in MyMap.MapElements)
-                {el.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/12.png"));}
+                {el.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/wifi-circle.png"));}
             }
             else
             {
