@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
@@ -30,13 +31,17 @@ namespace Wi_Fi_Map
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             MapData mapData = MapData.GetInstance();
-            string[] infoByOne = mapData.InfoAboutSignals.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            string[] names = infoByOne[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            var infoByOne1=infoByOne.ToList();
-            infoByOne1.RemoveAt(0);
-            foreach (string s in infoByOne1)
+            List<string> infoByOne = mapData.InfoAboutSignals.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            string names = infoByOne[0];
+            names = Regex.Replace(names, "[,\r\n]", " ");
+            string[] namesar=names.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            infoByOne.RemoveAt(0);
+
+            foreach (string s in infoByOne)
             {
-                string[] namecomp=s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string sReplaced = s;
+                sReplaced= Regex.Replace(sReplaced,"[,\r\n]", " ");
+                string[] namecomp=sReplaced.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 Grid gr = new Grid();
                 TextBlock tb = new TextBlock
                 {
@@ -44,11 +49,12 @@ namespace Wi_Fi_Map
                     FontSize = 20,
                     FontFamily = new FontFamily("Verdana"),
                     Margin = new Thickness(5, 5, 5, 5),
-                    Foreground = new SolidColorBrush(Colors.DimGray)
+                    Foreground = new SolidColorBrush(Colors.DimGray),
+                    TextWrapping = TextWrapping.Wrap
                 };
-                for(int i=0;i<names.Length;i++)
+                for(int i=0;i<namesar.Length;i++)
                 {
-                    tb.Text += names[i] + namecomp[i];
+                    tb.Text += namesar[i] + ": " + namecomp[i];
                 }
                 gr.Background = new SolidColorBrush(Colors.PowderBlue);
                 gr.Children.Add(tb);
