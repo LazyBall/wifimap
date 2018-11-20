@@ -54,7 +54,7 @@ namespace Wi_Fi_Map
                 };
                 for(int i=0;i<namesar.Length;i++)
                 {
-                    tb.Text += namesar[i] + ": " + namecomp[i];
+                    tb.Text += namesar[i] + ": " + namecomp[i] + ' ';
                 }
                 gr.Background = new SolidColorBrush(Colors.PowderBlue);
                 gr.Children.Add(tb);

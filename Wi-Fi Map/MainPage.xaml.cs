@@ -38,6 +38,7 @@ namespace Wi_Fi_Map
             MapListBoxItem.IsSelected = true;
             MyFrame.Navigate(typeof(Map));
             this._wifiScanner = new WiFiScanner();
+
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -266,19 +267,16 @@ namespace Wi_Fi_Map
 
         private void ToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            DispatcherTimer timer = new DispatcherTimer
-            {
-                Interval = new TimeSpan(0, 0, 10)
-            };
+            Timer timer = Timer.GetInstance();
             if (ToogleSwitch.IsOn==true)
             {
-                timer.Tick += Timer_Tick;
-                timer.Start();
+                timer.dispatcherTimer.Tick += Timer_Tick;//в одиночку таймер
+                timer.dispatcherTimer.Start();
                 ScanOnce.Visibility = Visibility.Collapsed;
             }
             else
             {
-                timer.Stop();
+                timer.dispatcherTimer.Stop();
                 ScanOnce.Visibility = Visibility.Visible;
             }
         }
