@@ -7,7 +7,7 @@ using System.Globalization;
 namespace Wi_Fi_Map
 {
     //Singleton pattern
-    public sealed class Database : IDisposable
+    public sealed class Database
     {
         private static readonly Lazy<Database> _dataBase = new Lazy<Database>(() => new Database());
         private readonly string _dataTable;
@@ -95,24 +95,25 @@ namespace Wi_Fi_Map
                 CommandText = SqlSelectAll(),
                 Connection = _connection
             };
-            SqlDataReader reader = command.ExecuteReader();
-            if (reader.HasRows) // если есть данные
+            using (var reader = command.ExecuteReader())
             {
-                while (reader.Read()) // построчно считываем данные
+                if (reader.HasRows) // если есть данные
                 {
-                    var wifiSignal = new WiFiSignalWithGeoposition
+                    while (reader.Read()) // построчно считываем данные
                     {
-                        BSSID = reader.GetString(0),
-                        SSID = reader.GetString(1),
-                        Latitude = reader.GetDouble(2),
-                        Longitude = reader.GetDouble(3),
-                        SignalStrength = reader.GetInt16(4),
-                        Encryption = reader.GetString(5),
-                    };
-                    _list.Add(wifiSignal);
+                        var wifiSignal = new WiFiSignalWithGeoposition
+                        {
+                            BSSID = reader.GetString(0),
+                            SSID = reader.GetString(1),
+                            Latitude = reader.GetDouble(2),
+                            Longitude = reader.GetDouble(3),
+                            SignalStrength = reader.GetInt16(4),
+                            Encryption = reader.GetString(5),
+                        };
+                        _list.Add(wifiSignal);
+                    }
                 }
             }
-            reader.Dispose();
             return _list;
         }
 
@@ -143,11 +144,6 @@ namespace Wi_Fi_Map
         private string SqlSelectAll()
         {
             return $@"SELECT * FROM {_dataTable}";
-        }
-
-        public void Dispose()
-        {
-            _connection.Dispose();
         }
     }
 }
