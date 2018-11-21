@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <Maps:MapControl x:Name="MyMap" Grid.Row="0" 
                          MapServiceToken=" dKEGXhsATRR76h8Klgk5~MokPeHVLlJS-TRpScYOjpw~ArTM5cQ2FNhRYvfJJSiRWY6zk6SuoRG_mxG82HyhJtMEW-aV-uu3qR3bvZTjqCK-" 
-                         
+                         MapElementClick="MyMap_MapElementClick"
                          Style="Road"
                          ZoomLevelChanged="MyMap_ZoomLevelChanged">
         </Maps:MapControl>
