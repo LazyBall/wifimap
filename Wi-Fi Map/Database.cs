@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
-
+using System.Threading.Tasks;
 
 namespace Wi_Fi_Map
 {
@@ -89,7 +89,6 @@ namespace Wi_Fi_Map
         public List<WiFiSignalWithGeoposition> SelectAll()
         {
             var _list = new List<WiFiSignalWithGeoposition>();
-
             var command = new SqlCommand
             {
                 CommandText = SqlSelectAll(),
