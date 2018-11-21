@@ -71,7 +71,11 @@ namespace Wi_Fi_Map
                 StringBuilder networkInfo = await RunWifiScan();
                 MapData mapData = MapData.GetInstance();
                 mapData.InfoAboutSignals = networkInfo.ToString();
-                if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
+                if (WifiListBoxItem.IsSelected)
+                {
+                    MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
+                    MyFrame.Navigate(typeof(WifiInfo));
+                }
                 else MyFrame.Navigate(typeof(Map),GPScoords.GetInstance());
             }
             catch (Exception ex)
@@ -126,16 +130,16 @@ namespace Wi_Fi_Map
         private StringBuilder CreateCsvReport(WiFiPointData wifiPoint)
         {
             StringBuilder networkInfo = new StringBuilder();
-            networkInfo.AppendLine("MAC,    SSID,   DecibelMilliwatts,  Type,   Lat,    Long,   Encryption");
-
+          
             foreach (var wifiSignal in wifiPoint.WiFiSignals)
             {
-                networkInfo.Append($"{wifiSignal.BSSID}, ");
-                networkInfo.Append($"{wifiSignal.SSID}, ");
-                networkInfo.Append($"{wifiSignal.SignalStrength}, ");
-                networkInfo.Append($"{wifiPoint.Latitude}, ");
-                networkInfo.Append($"{wifiPoint.Longitude}, ");
-                networkInfo.Append($"{wifiSignal.Encryption} ");
+                networkInfo.Append($"{wifiSignal.SSID}|");
+                networkInfo.Append($"{wifiSignal.SignalStrength}|");
+                networkInfo.Append($"{wifiSignal.Encryption}|");
+                networkInfo.Append($"{wifiSignal.BSSID}|");
+                networkInfo.Append($"{wifiPoint.Latitude}|");
+                networkInfo.Append($"{wifiPoint.Longitude}|");
+                
                 networkInfo.AppendLine();
             }
 
@@ -254,8 +258,12 @@ namespace Wi_Fi_Map
                 StringBuilder networkInfo = await RunWifiScan();
                 MapData mapData = MapData.GetInstance();
                 mapData.InfoAboutSignals = networkInfo.ToString();
-                if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
-                else MyFrame.Navigate(typeof(Map),GPScoords.GetInstance());
+                if (WifiListBoxItem.IsSelected)
+                {
+                    MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
+                    MyFrame.Navigate(typeof(WifiInfo));
+                }
+                else MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
             }
             catch (Exception ex)
             {
