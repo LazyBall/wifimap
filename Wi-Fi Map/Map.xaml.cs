@@ -57,6 +57,10 @@ namespace Wi_Fi_Map
 
         private void AddWifiPointsToMap(MapData mapData)
         {
+            MyMap.MapElements.Clear();
+            string filename = "ms-appx:///Assets/region.png";
+            //if (MyMap.ZoomLevel > 18)
+            //{filename = "ms-appx:///Assets/wifi-circle.png";}
             foreach (WiFiSignalWithGeoposition el in mapData._signals)
             {
                 BasicGeoposition geopositionIcon = CreateBasicGeoposition(el.Latitude, el.Longitude);
@@ -64,12 +68,14 @@ namespace Wi_Fi_Map
                 MapIcon mapIcon = new MapIcon
                 {
                     Location = point,
-                    Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/region.png")),
+                    Image = RandomAccessStreamReference.CreateFromUri(new Uri(filename)),
                     NormalizedAnchorPoint = new Point(0.5, 0.5),
-                    Title = el.SSID
+                    Title = el.SSID,
+                    Tag = String.Join('\n', el.SSID, el.Encryption, el.SignalStrength, el.Latitude + " : " + el.Longitude, el.BSSID)               
                 };
                 MyMap.MapElements.Add(mapIcon);
             }
+            mapData._signals.Clear();
         }
 
         private void ShowOnMapPosition(BasicGeoposition geoposition)
@@ -94,16 +100,17 @@ namespace Wi_Fi_Map
             MapData mapData = MapData.GetInstance();
             if (MyMap.ZoomLevel < 9) MyMap.ZoomLevel = 9;
             if (MyMap.ZoomLevel > 20) MyMap.ZoomLevel = 20;
-            if (MyMap.ZoomLevel > 18)
-            {
-                foreach (MapIcon el in MyMap.MapElements)
-                {el.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/wifi-circle.png"));}
-            }
-            else
-            {
-                foreach (MapIcon el in MyMap.MapElements)
-                {el.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/region.png"));}
-            }
+            //if (MyMap.ZoomLevel > 18) 
+            //{
+            //    foreach (MapIcon el in MyMap.MapElements)
+            //    {el.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/wifi-circle.png"));}
+            //    //(MyMap.Children[0] as Image).Source= new BitmapImage(new Uri("ms-appx:///Assets/circle-blue-overlay100.png"));
+            //}
+            //else
+            //{
+            //    foreach (MapIcon el in MyMap.MapElements)
+            //    {el.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/region.png"));}
+            //}
         }
 
         private static BasicGeoposition CreateBasicGeoposition(double x,double y)
@@ -123,6 +130,14 @@ namespace Wi_Fi_Map
                 BasicGeoposition geoposition = CreateBasicGeoposition(gps.Lat, gps.Lon);
                 ShowOnMapPosition(geoposition);
             }
+        }
+
+        private void MyMap_MapElementClick(MapControl sender, MapElementClickEventArgs args)
+        {
+            MapIcon myClickedIcon = args.MapElements.FirstOrDefault(x => x is MapIcon) as MapIcon;
+            string Title = myClickedIcon.Title;
+            myClickedIcon.Title = myClickedIcon.Tag.ToString();
+            myClickedIcon.Tag = Title;
         }
     }
 }
