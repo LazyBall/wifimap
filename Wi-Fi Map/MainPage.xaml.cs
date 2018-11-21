@@ -114,6 +114,7 @@ namespace Wi_Fi_Map
                 };               
                 wifiPoint.WiFiSignals.Add(wifiSignal);                
             }
+            
             var db = Database.Instance;
             db.Insert(wifiPoint);
             MapData mapData = MapData.GetInstance();
