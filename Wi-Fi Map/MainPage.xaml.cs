@@ -70,7 +70,6 @@ namespace Wi_Fi_Map
             {
                 StringBuilder networkInfo = await RunWifiScan();
                 MapData mapData = MapData.GetInstance();
-                mapData.InfoAboutSignals = networkInfo.ToString();
                 if (WifiListBoxItem.IsSelected)
                 {
                     MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
@@ -258,8 +257,6 @@ namespace Wi_Fi_Map
             try
             {
                 StringBuilder networkInfo = await RunWifiScan();
-                MapData mapData = MapData.GetInstance();
-                mapData.InfoAboutSignals = networkInfo.ToString();
                 if (WifiListBoxItem.IsSelected)
                 {
                     MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
