@@ -113,7 +113,6 @@ namespace Wi_Fi_Map
             db.Insert(wifiPoint);
             MapData mapData = MapData.GetInstance();
             mapData.AddData(db.SelectAll());
-            db.Dispose();
             GPScoords gPScoords = GPScoords.GetInstance();
             gPScoords.Lat = wifiPoint.Latitude;
             gPScoords.Lon = wifiPoint.Longitude;
