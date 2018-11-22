@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Devices.WiFi;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
@@ -18,7 +17,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -35,6 +33,11 @@ namespace Wi_Fi_Map
         int textBlockLineHeight = 21;
         int textBlockSymbolFontSize = 30;
         int textBlockFontSize = 20;
+        string badSignalSymbol = "\xEC3D";
+        string normalSignalSymbol = "\xEC3E";
+        string goodSignalSymbol = "\xEC3F";
+        string encriptionSymbol = "\xE785";
+        string positionSymbol = "\xE1C4";
         string symbolFontFamily = "Segoe MDL2 Assets";
         string fontFamily = "Verdana";
         Brush nameForeground = new SolidColorBrush(Colors.LightGray);
@@ -44,28 +47,31 @@ namespace Wi_Fi_Map
         {
             this.InitializeComponent();
         }
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            List<WiFiSignal> infoByOne = new List<WiFiSignal>(await ScanNetworkAsync());
-            if (infoByOne.Count <= 0)
+            MapData mapData = MapData.GetInstance();
+            GPScoords gPScoords = GPScoords.GetInstance();
+            WiFiPointData signals = gPScoords._signalsAround;
+            if (signals.WiFiSignals.Count <= 0)
             {
                 TextBlock tb = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "Нет информации для отображения!");
                 stackPanelInfo.Children.Add(tb);
             }
-            foreach (var s in infoByOne)
+            foreach (WiFiSignal s in signals.WiFiSignals)
             {
-                TextBlock tbSSID = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "SSID");
-                TextBlock tbSignalStrength = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, "\xEC3E");
-                TextBlock tbEncryption = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, "\xE785");
-                TextBlock tbMAC = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "BSSID");
-                TextBlock tbLanLong = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, new SolidColorBrush(Colors.Aqua), "\xE1C4");
+                TextBlock tbSSID = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "Name");
+                TextBlock tbSignalStrength = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, normalSignalSymbol);
+                TextBlock tbEncryption = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, encriptionSymbol);
+                TextBlock tbMAC = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "MAC");
+                TextBlock tbLanLong = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, new SolidColorBrush(Colors.Aqua), positionSymbol);
 
                 TextBlock tbSSIDValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.SSID);
                 TextBlock tbSignalStrengthValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.SignalStrength);
                 TextBlock tbEncryptionValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.Encryption);
                 TextBlock tbMACValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.BSSID);
+                TextBlock tbLanLongValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, new SolidColorBrush(Colors.LightPink), " " + signals.Latitude + " : " + signals.Longitude);
 
-                CheckColor(s, tbSignalStrength, tbEncryption);
+                Check(s, tbSignalStrength, tbEncryption);
 
                 WrapPanel gr = new WrapPanel();
 
@@ -78,6 +84,7 @@ namespace Wi_Fi_Map
                 gr.Children.Add(tbMAC);
                 gr.Children.Add(tbMACValue);
                 gr.Children.Add(tbLanLong);
+                gr.Children.Add(tbLanLongValue);
 
                 stackPanelInfo.Children.Add(gr);
 
@@ -86,37 +93,37 @@ namespace Wi_Fi_Map
                     Height = 1,
                     Background = new SolidColorBrush(Colors.WhiteSmoke),
                     Opacity = 0.3
-                    
+
                 };
 
                 stackPanelInfo.Children.Add(grid);
             }
         }
 
-        private void CheckColor(WiFiSignal signal, TextBlock tbSignalStrength, TextBlock tbEncryption)
+        private void Check(WiFiSignal s, TextBlock tbSignalStrength, TextBlock tbEncryption)
         {
-            if (signal.SignalStrength <= badSignal)
+            if (s.SignalStrength <= badSignal)
             {
                 tbSignalStrength.Foreground = new SolidColorBrush(Colors.Red);
-                tbSignalStrength.Text = "\xEC3D";
+                tbSignalStrength.Text = badSignalSymbol;
             }
-            else if (signal.SignalStrength > badSignal && signal.SignalStrength <= normalSignal)
+            else if (s.SignalStrength > badSignal && s.SignalStrength <= normalSignal)
             {
                 tbSignalStrength.Foreground = new SolidColorBrush(Colors.Yellow);
-                tbSignalStrength.Text = "\xEC3E";
+                tbSignalStrength.Text = normalSignalSymbol;
             }
             else
             {
                 tbSignalStrength.Foreground = new SolidColorBrush(Colors.Lime);
-                tbSignalStrength.Text = "\xEC3F";
+                tbSignalStrength.Text = goodSignalSymbol;
             }
-            if (signal.Encryption != "None")
+            if (s.Encryption != "None")
                 tbEncryption.Foreground = new SolidColorBrush(Colors.Red);
             else
                 tbEncryption.Foreground = new SolidColorBrush(Colors.LimeGreen);
         }
 
-        private static TextBlock GetTb(int tblh,int tbfs,string ff,Brush brush,string text)
+        private static TextBlock GetTb(int tblh, int tbfs, string ff, Brush brush, string text)
         {
             return new TextBlock
             {
@@ -133,33 +140,6 @@ namespace Wi_Fi_Map
         {
             var dialog = new MessageDialog(message);
             await dialog.ShowAsync();
-        }
-
-        private async Task<IEnumerable<WiFiSignal>> ScanNetworkAsync()
-        {
-            WiFiScanner wifiScanner = new WiFiScanner();
-            await wifiScanner.InitializeScanner();
-            await wifiScanner.ScanForNetworks();
-            WiFiNetworkReport report = wifiScanner.WiFiAdapter.NetworkReport;
-            var list = new List<WiFiSignal>();
-            foreach (var availableNetwork in report.AvailableNetworks)
-            {
-                WiFiSignal wifiSignal = new WiFiSignal
-                {
-                    BeaconInterval = availableNetwork.BeaconInterval.TotalSeconds.ToString(),
-                    BSSID = availableNetwork.Bssid,
-                    ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
-                    Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString(),
-                    IsWiFiDirect = availableNetwork.IsWiFiDirect,
-                    NetworkKind = availableNetwork.NetworkKind.ToString(),
-                    PhyKind = availableNetwork.PhyKind.ToString(),
-                    SignalStrength = (short)availableNetwork.NetworkRssiInDecibelMilliwatts,
-                    SSID = availableNetwork.Ssid,
-                    Uptime = availableNetwork.Uptime.TotalHours.ToString()
-                };
-                list.Add(wifiSignal);
-            }
-            return list;
         }
     }
 }

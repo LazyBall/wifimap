@@ -68,8 +68,7 @@ namespace Wi_Fi_Map
         {
             try
             {
-                StringBuilder networkInfo = await RunWifiScan();
-                MapData mapData = MapData.GetInstance();
+                await RunWifiScan(); 
                 if (WifiListBoxItem.IsSelected)
                 {
                     MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
@@ -84,7 +83,7 @@ namespace Wi_Fi_Map
             }
         }
 
-        private async Task<StringBuilder> RunWifiScan()
+        private async Task RunWifiScan()
         {
             await this._wifiScanner.ScanForNetworks();
             
@@ -121,11 +120,7 @@ namespace Wi_Fi_Map
             GPScoords gPScoords = GPScoords.GetInstance();
             gPScoords.Lat = wifiPoint.Latitude;
             gPScoords.Lon = wifiPoint.Longitude;
-            
-
-            StringBuilder networkInfo = CreateCsvReport(wifiPoint);
-
-            return networkInfo;
+            gPScoords._signalsAround = wifiPoint;
         }
 
         private StringBuilder CreateCsvReport(WiFiPointData wifiPoint)
@@ -232,7 +227,6 @@ namespace Wi_Fi_Map
             MapData mapData = MapData.GetInstance();
             if (RequestedTheme == ElementTheme.Light || RequestedTheme == ElementTheme.Default)
             {
-
                 RequestedTheme = ElementTheme.Dark;
                 mapData.Scheme = MapColorScheme.Dark;
                 SplitViewON.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(190, 129, 9, 135));
@@ -254,9 +248,11 @@ namespace Wi_Fi_Map
 
         private async void ScanOnce_ClickAsync(object sender, RoutedEventArgs e)
         {
+            ScanOnce.IsEnabled = false;
+            ToogleSwitch.IsEnabled = false;
             try
             {
-                StringBuilder networkInfo = await RunWifiScan();
+                await RunWifiScan();
                 if (WifiListBoxItem.IsSelected)
                 {
                     MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
@@ -269,7 +265,8 @@ namespace Wi_Fi_Map
                 MessageDialog md = new MessageDialog(ex.Message);
                 await md.ShowAsync();
             }
-
+            ScanOnce.IsEnabled = true;
+            ToogleSwitch.IsEnabled = true;
         }
 
         private void ToggleSwitch_Toggled(object sender, RoutedEventArgs e)
