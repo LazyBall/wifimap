@@ -14,10 +14,12 @@ namespace Wi_Fi_Map
         private static GPScoords _uniqueGPS;
         public double Lat { get; set; } 
         public double Lon { get; set; }
+        public WiFiPointData _signalsAround;
         private GPScoords()
         {
             Lat = -1;
             Lon = -1;
+            _signalsAround = new WiFiPointData();
         }
         public static GPScoords GetInstance()
         {
