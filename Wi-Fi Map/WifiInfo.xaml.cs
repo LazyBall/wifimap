@@ -33,6 +33,11 @@ namespace Wi_Fi_Map
         int textBlockLineHeight = 21;
         int textBlockSymbolFontSize = 30;
         int textBlockFontSize = 20;
+        string badSignalSymbol = "\xEC3D";
+        string normalSignalSymbol = "\xEC3E";
+        string goodSignalSymbol = "\xEC3F";
+        string encriptionSymbol = "\xE785";
+        string positionSymbol = "\xE1C4";
         string symbolFontFamily = "Segoe MDL2 Assets";
         string fontFamily = "Verdana";
         Brush nameForeground = new SolidColorBrush(Colors.LightGray);
@@ -45,31 +50,28 @@ namespace Wi_Fi_Map
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             MapData mapData = MapData.GetInstance();
-            List<string> infoByOne = mapData.InfoAboutSignals.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            if (infoByOne.Count <= 0)
+            GPScoords gPScoords = GPScoords.GetInstance();
+            WiFiPointData signals = gPScoords._signalsAround;
+            if (signals.WiFiSignals.Count <= 0)
             {
                 TextBlock tb = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "Нет информации для отображения!");
                 stackPanelInfo.Children.Add(tb);
             }
-            foreach (string s in infoByOne)
+            foreach (WiFiSignal s in signals.WiFiSignals)
             {
-                string sReplaced = s;
-                sReplaced = Regex.Replace(sReplaced, "[\r\n]", " ");
-                string[] namecomp = sReplaced.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-
                 TextBlock tbSSID = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "Name");
-                TextBlock tbSignalStrength = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, "\xEC3E");
-                TextBlock tbEncryption = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, "\xE785");
+                TextBlock tbSignalStrength = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, normalSignalSymbol);
+                TextBlock tbEncryption = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, encriptionSymbol);
                 TextBlock tbMAC = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "MAC");
-                TextBlock tbLanLong = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, new SolidColorBrush(Colors.Aqua), "\xE1C4");
+                TextBlock tbLanLong = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, new SolidColorBrush(Colors.Aqua), positionSymbol);
 
-                TextBlock tbSSIDValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + namecomp[0]);
-                TextBlock tbSignalStrengthValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + namecomp[1]);
-                TextBlock tbEncryptionValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + namecomp[2]);
-                TextBlock tbMACValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + namecomp[3]);
-                TextBlock tbLanLongValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, new SolidColorBrush(Colors.LightPink), " " + namecomp[4] + " : " + namecomp[5]);
+                TextBlock tbSSIDValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.SSID);
+                TextBlock tbSignalStrengthValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.SignalStrength);
+                TextBlock tbEncryptionValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.Encryption);
+                TextBlock tbMACValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.BSSID);
+                TextBlock tbLanLongValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, new SolidColorBrush(Colors.LightPink), " " + signals.Latitude + " : " + signals.Longitude);
 
-                CheckColor(namecomp, tbSignalStrength, tbEncryption);
+                Check(s, tbSignalStrength, tbEncryption);
 
                 WrapPanel gr = new WrapPanel();
 
@@ -91,37 +93,37 @@ namespace Wi_Fi_Map
                     Height = 1,
                     Background = new SolidColorBrush(Colors.WhiteSmoke),
                     Opacity = 0.3
-                    
+
                 };
 
                 stackPanelInfo.Children.Add(grid);
             }
         }
 
-        private void CheckColor(string[] namecomp, TextBlock tbSignalStrength, TextBlock tbEncryption)
+        private void Check(WiFiSignal s, TextBlock tbSignalStrength, TextBlock tbEncryption)
         {
-            if (double.Parse(namecomp[1]) <= badSignal)
+            if (s.SignalStrength <= badSignal)
             {
                 tbSignalStrength.Foreground = new SolidColorBrush(Colors.Red);
-                tbSignalStrength.Text = "\xEC3D";
+                tbSignalStrength.Text = badSignalSymbol;
             }
-            else if (double.Parse(namecomp[1]) > badSignal && double.Parse(namecomp[1]) <= normalSignal)
+            else if (s.SignalStrength > badSignal && s.SignalStrength <= normalSignal)
             {
                 tbSignalStrength.Foreground = new SolidColorBrush(Colors.Yellow);
-                tbSignalStrength.Text = "\xEC3E";
+                tbSignalStrength.Text = normalSignalSymbol;
             }
             else
             {
                 tbSignalStrength.Foreground = new SolidColorBrush(Colors.Lime);
-                tbSignalStrength.Text = "\xEC3F";
+                tbSignalStrength.Text = goodSignalSymbol;
             }
-            if (namecomp[2] != "None")
+            if (s.Encryption != "None")
                 tbEncryption.Foreground = new SolidColorBrush(Colors.Red);
             else
                 tbEncryption.Foreground = new SolidColorBrush(Colors.LimeGreen);
         }
 
-        private static TextBlock GetTb(int tblh,int tbfs,string ff,Brush brush,string text)
+        private static TextBlock GetTb(int tblh, int tbfs, string ff, Brush brush, string text)
         {
             return new TextBlock
             {
