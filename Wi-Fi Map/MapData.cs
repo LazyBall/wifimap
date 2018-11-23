@@ -11,18 +11,14 @@ namespace Wi_Fi_Map
     {
         private static MapData _uniqueMap;
         public List<WiFiSignalWithGeoposition> _signals;
-        public HashSet<string> _bssid;
         public string InfoAboutSignals { get; set; } = "";
         public double Lat { get; set; } = 57.622020;
         public double Lon { get; set; } = 39.932172;
-        public double CurrentZoom { get; set; } = 10;
-        public double MinZoom { get; set; } = 10;
-        public double MaxZoom { get; set; } = 19;
         public MapColorScheme Scheme { get; set; } = MapColorScheme.Light;
+
         private MapData()
         {
             _signals = new List<WiFiSignalWithGeoposition>();
-            _bssid = new HashSet<string>();
         }
         public static MapData GetInstance()
         {
@@ -36,26 +32,8 @@ namespace Wi_Fi_Map
         {
             foreach (WiFiSignalWithGeoposition el in fiSignals)
             {
-                if (_bssid.Contains(el.BSSID))
-                {
-
-                }
-                else
-                {
-                    _bssid.Add(el.BSSID);
-                    _signals.Add(el);
-                }
+                _signals.Add(el);
             }
-        }
-        public void AddData(WiFiPointData wiFiPoint)
-        {
-            List<WiFiSignalWithGeoposition> list = new List<WiFiSignalWithGeoposition>();
-            foreach(var signal in wiFiPoint.WiFiSignals)
-            {
-                WiFiSignalWithGeoposition sg = new WiFiSignalWithGeoposition(signal, wiFiPoint.TimeStamp, wiFiPoint.Latitude, wiFiPoint.Longitude);
-                list.Add(sg);
-            }
-            AddData(list);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Wi_Fi_Map
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private WiFiScanner _wifiScanner;
+        private WiFiScanner _wifiScanner;      
 
         public MainPage()
         {
@@ -38,6 +38,7 @@ namespace Wi_Fi_Map
             MapListBoxItem.IsSelected = true;
             MyFrame.Navigate(typeof(Map));
             this._wifiScanner = new WiFiScanner();
+
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -63,43 +64,17 @@ namespace Wi_Fi_Map
             }
         }
 
-        //private async void BtnScan_Click(object sender, RoutedEventArgs e)
-        //{
-        //    this.btnScan.IsEnabled = false;
-
-        //    try
-        //    {
-        //        StringBuilder networkInfo = await RunWifiScan();
-        //        this.txbReport.Text = networkInfo.ToString();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageDialog md = new MessageDialog(ex.Message);
-        //        await md.ShowAsync();
-        //    }
-
-        //    this.btnScan.IsEnabled = true;
-        //}
-
-        //private async void BtnScanRepeatedly_Click(object sender, RoutedEventArgs e)
-        //{
-        //    DispatcherTimer timer = new DispatcherTimer
-        //    {
-        //        Interval = new TimeSpan(0, 0, 10)
-        //    };
-        //    timer.Tick += Timer_Tick;
-        //    timer.Start();
-        //}
-
         private async void Timer_Tick(object sender, object e)
         {
             try
             {
-                StringBuilder networkInfo = await RunWifiScan();
-                MapData mapData = MapData.GetInstance();
-                mapData.InfoAboutSignals = networkInfo.ToString();
-                if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
-                //else MyFrame.Navigate(typeof(Map));
+                await RunWifiScan(); 
+                if (WifiListBoxItem.IsSelected)
+                {
+                    MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
+                    MyFrame.Navigate(typeof(WifiInfo));
+                }
+                else MyFrame.Navigate(typeof(Map),GPScoords.GetInstance());
             }
             catch (Exception ex)
             {
@@ -108,7 +83,7 @@ namespace Wi_Fi_Map
             }
         }
 
-        private async Task<StringBuilder> RunWifiScan()
+        private async Task RunWifiScan()
         {
             await this._wifiScanner.ScanForNetworks();
             
@@ -122,35 +97,45 @@ namespace Wi_Fi_Map
 
             foreach (var availableNetwork in report.AvailableNetworks)
             {
-                WiFiSignal wifiSignal = new WiFiSignal(availableNetwork.Bssid, availableNetwork.Ssid,
-                    availableNetwork.NetworkRssiInDecibelMilliwatts,
-                    availableNetwork.ChannelCenterFrequencyInKilohertz,
-                    availableNetwork.SecuritySettings.NetworkEncryptionType.ToString());
+                WiFiSignal wifiSignal = new WiFiSignal
+                {
+                    BeaconInterval = availableNetwork.BeaconInterval.TotalSeconds.ToString(),
+                    BSSID = availableNetwork.Bssid,
+                    ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
+                    Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString(),
+                    IsWiFiDirect = availableNetwork.IsWiFiDirect,
+                    NetworkKind = availableNetwork.NetworkKind.ToString(),
+                    PhyKind = availableNetwork.PhyKind.ToString(),
+                    SignalStrength = (short)availableNetwork.NetworkRssiInDecibelMilliwatts,
+                    SSID = availableNetwork.Ssid,
+                    Uptime = availableNetwork.Uptime.TotalHours.ToString()
+                };               
                 wifiPoint.WiFiSignals.Add(wifiSignal);                
             }
+            
+            var db = Database.Instance;
+            db.Insert(wifiPoint);
             MapData mapData = MapData.GetInstance();
-            mapData.AddData(wifiPoint);
+            mapData.AddData(db.SelectAll());
             GPScoords gPScoords = GPScoords.GetInstance();
             gPScoords.Lat = wifiPoint.Latitude;
             gPScoords.Lon = wifiPoint.Longitude;
-            StringBuilder networkInfo = CreateCsvReport(wifiPoint);
-
-            return networkInfo;
+            gPScoords._signalsAround = wifiPoint;
         }
 
         private StringBuilder CreateCsvReport(WiFiPointData wifiPoint)
         {
             StringBuilder networkInfo = new StringBuilder();
-            networkInfo.AppendLine("MAC,    SSID,   DecibelMilliwatts,  Type,   Lat,    Long,   Encryption");
-
+          
             foreach (var wifiSignal in wifiPoint.WiFiSignals)
             {
-                networkInfo.Append($"{wifiSignal.BSSID}, ");
-                networkInfo.Append($"{wifiSignal.SSID}, ");
-                networkInfo.Append($"{wifiSignal.NetworkRssiInDecibelMilliwatts}, ");
-                networkInfo.Append($"{wifiPoint.Latitude}, ");
-                networkInfo.Append($"{wifiPoint.Longitude}, ");
-                networkInfo.Append($"{wifiSignal.Encryption} ");
+                networkInfo.Append($"{wifiSignal.SSID}|");
+                networkInfo.Append($"{wifiSignal.SignalStrength}|");
+                networkInfo.Append($"{wifiSignal.Encryption}|");
+                networkInfo.Append($"{wifiSignal.BSSID}|");
+                networkInfo.Append($"{wifiPoint.Latitude}|");
+                networkInfo.Append($"{wifiPoint.Longitude}|");
+                
                 networkInfo.AppendLine();
             }
 
@@ -221,14 +206,12 @@ namespace Wi_Fi_Map
                         mapData.Lat = result.Locations[0].Point.Position.Latitude;
                         mapData.Lon = result.Locations[0].Point.Position.Longitude;
                     }
-                    catch (ArgumentOutOfRangeException ex)
+                    catch (ArgumentOutOfRangeException)
                     {
                         MessageDialog md = new MessageDialog("По вашему запросу ничего не найдено!");
                         await md.ShowAsync();
                     }
-                    if (addressToGeocode.Length > 11) mapData.CurrentZoom = 17;
-                    else mapData.CurrentZoom = 12;
-                    MyFrame.Navigate(typeof(Map));
+                    MyFrame.Navigate(typeof(Map), mapData);
                 }
                 else
                 {
@@ -244,7 +227,6 @@ namespace Wi_Fi_Map
             MapData mapData = MapData.GetInstance();
             if (RequestedTheme == ElementTheme.Light || RequestedTheme == ElementTheme.Default)
             {
-
                 RequestedTheme = ElementTheme.Dark;
                 mapData.Scheme = MapColorScheme.Dark;
                 SplitViewON.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(190, 129, 9, 135));
@@ -264,52 +246,41 @@ namespace Wi_Fi_Map
             MyFrame.Navigate(typeof(Map));
         }
 
-        private void Postion_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            GPScoords gps = GPScoords.GetInstance();
-            MapData mapData = MapData.GetInstance();
-            if (gps.Lat != -1 && gps.Lon != -1)
-            {
-                mapData.Lat = gps.Lat;
-                mapData.Lon = gps.Lon;
-            }
-            MyFrame.Navigate(typeof(Map));
-        }
-
         private async void ScanOnce_ClickAsync(object sender, RoutedEventArgs e)
         {
+            ScanOnce.IsEnabled = false;
+            ToogleSwitch.IsEnabled = false;
             try
             {
-                StringBuilder networkInfo = await RunWifiScan();
-                MapData mapData = MapData.GetInstance();
-                mapData.InfoAboutSignals = networkInfo.ToString();
-                if (WifiListBoxItem.IsSelected) MyFrame.Navigate(typeof(WifiInfo));
-                else MyFrame.Navigate(typeof(Map));
-                //MyFrame.Navigate(typeof(Map), WiFiPointData a);
+                await RunWifiScan();
+                if (WifiListBoxItem.IsSelected)
+                {
+                    MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
+                    MyFrame.Navigate(typeof(WifiInfo));
+                }
+                else MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
             }
             catch (Exception ex)
             {
                 MessageDialog md = new MessageDialog(ex.Message);
                 await md.ShowAsync();
             }
-
+            ScanOnce.IsEnabled = true;
+            ToogleSwitch.IsEnabled = true;
         }
 
         private void ToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            DispatcherTimer timer = new DispatcherTimer
-            {
-                Interval = new TimeSpan(0, 0, 10)
-            };
+            Timer timer = Timer.GetInstance();
             if (ToogleSwitch.IsOn==true)
             {
-                timer.Tick += Timer_Tick;
-                timer.Start();
+                timer.dispatcherTimer.Tick += Timer_Tick;//в одиночку таймер
+                timer.dispatcherTimer.Start();
                 ScanOnce.Visibility = Visibility.Collapsed;
             }
             else
             {
-                timer.Stop();
+                timer.dispatcherTimer.Stop();
                 ScanOnce.Visibility = Visibility.Visible;
             }
         }
