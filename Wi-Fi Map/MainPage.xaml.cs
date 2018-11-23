@@ -123,25 +123,6 @@ namespace Wi_Fi_Map
             gPScoords._signalsAround = wifiPoint;
         }
 
-        private StringBuilder CreateCsvReport(WiFiPointData wifiPoint)
-        {
-            StringBuilder networkInfo = new StringBuilder();
-          
-            foreach (var wifiSignal in wifiPoint.WiFiSignals)
-            {
-                networkInfo.Append($"{wifiSignal.SSID}|");
-                networkInfo.Append($"{wifiSignal.SignalStrength}|");
-                networkInfo.Append($"{wifiSignal.Encryption}|");
-                networkInfo.Append($"{wifiSignal.BSSID}|");
-                networkInfo.Append($"{wifiPoint.Latitude}|");
-                networkInfo.Append($"{wifiPoint.Longitude}|");
-                
-                networkInfo.AppendLine();
-            }
-
-            return networkInfo;
-        }
-
         private async Task ShowMessage(string message)
         {
             var dialog = new MessageDialog(message);
