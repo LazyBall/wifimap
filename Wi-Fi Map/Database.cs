@@ -6,143 +6,126 @@ using System.Threading.Tasks;
 
 namespace Wi_Fi_Map
 {
-    //Singleton pattern
+
     public sealed class Database
     {
-        private static readonly Lazy<Database> _dataBase = new Lazy<Database>(() => new Database());
-        private readonly string _dataTable;
-        private readonly SqlConnection _connection;
-
-        private Database()
+        // Единственные заполняемые данные для подключения к базе данных
+        private static readonly string _dataTable = "WiFi";
+        private static readonly string _connectionString = (new SqlConnectionStringBuilder
         {
+            DataSource = "wifisqlserver.database.windows.net",
+            UserID = "User",
+            Password = "QyPc17ebb4GT",
+            InitialCatalog = "wifidb"
+        }).ConnectionString;
+        //
 
-            // Единственные заполняемые данные для подключения к базе данных
-            string dataSource = "wifisqlserver.database.windows.net";
-            string userID = "User";
-            string password = "QyPc17ebb4GT";
-            string initialCatalog = "wifidb";
-            _dataTable = "WiFi";
-            //
-
-            string connectionString = (new SqlConnectionStringBuilder
-            {
-                DataSource = dataSource,
-                UserID = userID,
-                Password = password,
-                InitialCatalog = initialCatalog
-            }).ConnectionString;
-            _connection = new SqlConnection(connectionString);
-            _connection.Open();
+        public Database()
+        {
+            
         }
 
-        public static Database Instance
+        public void AddSignal(WiFiSignalWithGeoposition wiFiSignal)
         {
-            get
-            {
-                return _dataBase.Value;
-            }
+            var arr = new WiFiSignalWithGeoposition[1];
+            arr[0] = wiFiSignal;
+            AddSignals(arr);
         }
-
-        public void Insert(WiFiPointData wiFiPoint)
+      
+        public void AddSignals(IEnumerable<WiFiSignalWithGeoposition> wiFiSignals)
         {
-            foreach (var signal in wiFiPoint.WiFiSignals)
+            // название процедуры
+            string sqlExpression = "InsertWiFi";
+            using (var connection = new SqlConnection(_connectionString))
             {
-                WiFiSignalWithGeoposition sg = new WiFiSignalWithGeoposition
+                connection.Open();
+                var command = new SqlCommand
                 {
-                    BSSID = signal.BSSID,
-                    Encryption = signal.Encryption,
-                    Latitude = wiFiPoint.Latitude,
-                    Longitude = wiFiPoint.Longitude,
-                    SignalStrength = signal.SignalStrength,
-                    SSID = signal.SSID,
+                    CommandText = sqlExpression,
+                    Connection = connection,
+                    CommandType = System.Data.CommandType.StoredProcedure
                 };
-                Insert(sg);
-            }
-        }
-
-        public void Insert(WiFiSignalWithGeoposition wiFiSignal)
-        {
-            var command = new SqlCommand
-            {
-                CommandText = SqlCheckRecord(wiFiSignal.BSSID),
-                Connection = _connection
-            };
-            object _signalStregth = command.ExecuteScalar();
-            if (_signalStregth == null)
-            {
-                command.CommandText =
-                    SqlInsert(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
-                    wiFiSignal.Longitude, wiFiSignal.SignalStrength,
-                    wiFiSignal.Encryption);
-                command.ExecuteNonQuery();
-            }
-            else if (wiFiSignal.SignalStrength > ((short)_signalStregth))
-            {
-                command.CommandText =
-                    SqlUpdate(wiFiSignal.BSSID, wiFiSignal.SSID, wiFiSignal.Latitude,
-                    wiFiSignal.Longitude, wiFiSignal.SignalStrength,
-                    wiFiSignal.Encryption);
-                command.ExecuteNonQuery();
-            }
-        }
-
-        public List<WiFiSignalWithGeoposition> SelectAll()
-        {
-            var _list = new List<WiFiSignalWithGeoposition>();
-            var command = new SqlCommand
-            {
-                CommandText = SqlSelectAll(),
-                Connection = _connection
-            };
-            using (var reader = command.ExecuteReader())
-            {
-                if (reader.HasRows) // если есть данные
+                foreach (var signal in wiFiSignals)
                 {
-                    while (reader.Read()) // построчно считываем данные
+                    command.Parameters.Clear();
+                    command = AddParameters(command, signal);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }  
+        
+        private SqlCommand AddParameters(SqlCommand command, WiFiSignalWithGeoposition signal)
+        {
+            command.Parameters.AddWithValue("@bssid", signal.BSSID);
+            command.Parameters.AddWithValue("@ssid", signal.SSID);
+            command.Parameters.AddWithValue("@latitude",
+                signal.Latitude.ToString(new CultureInfo("en-US")));
+            command.Parameters.AddWithValue("@longitude",
+                signal.Longitude.ToString(new CultureInfo("en-US")));
+            command.Parameters.AddWithValue("@signalStrength",
+                signal.SignalStrength.ToString(new CultureInfo("en-US")));
+            command.Parameters.AddWithValue("@encryption", signal.Encryption);
+            return command;
+        }
+
+        public IEnumerable<WiFiSignalWithGeoposition> GetAllSignals()
+        {
+            string sqlExpression = $@"SELECT * FROM {_dataTable}";
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand(sqlExpression, connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows) // если есть данные
                     {
-                        var wifiSignal = new WiFiSignalWithGeoposition
+                        while (reader.Read()) // построчно считываем данные
                         {
-                            BSSID = reader.GetString(0),
-                            SSID = reader.GetString(1),
-                            Latitude = reader.GetDouble(2),
-                            Longitude = reader.GetDouble(3),
-                            SignalStrength = reader.GetInt16(4),
-                            Encryption = reader.GetString(5),
-                        };
-                        _list.Add(wifiSignal);
+                            var wifiSignal = new WiFiSignalWithGeoposition
+                            {
+                                BSSID = reader.GetString(0),
+                                SSID = reader.GetString(1),
+                                Latitude = reader.GetDouble(2),
+                                Longitude = reader.GetDouble(3),
+                                SignalStrength = reader.GetInt16(4),
+                                Encryption = reader.GetString(5),
+                            };
+                            yield return wifiSignal;
+                        }
+                    }
+                }      
+            }
+        }
+
+        public async Task<IEnumerable<WiFiSignalWithGeoposition>> GetAllSignalsAsync()
+        {
+            var list = new List<WiFiSignalWithGeoposition>();
+            string sqlExpression = $@"SELECT * FROM {_dataTable}";
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var command = new SqlCommand(sqlExpression, connection);
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    if (reader.HasRows) // если есть данные
+                    {
+                        while (await reader.ReadAsync()) // построчно считываем данные
+                        {
+                            var wifiSignal = new WiFiSignalWithGeoposition
+                            {
+                                BSSID = reader.GetString(0),
+                                SSID = reader.GetString(1),
+                                Latitude = reader.GetDouble(2),
+                                Longitude = reader.GetDouble(3),
+                                SignalStrength = reader.GetInt16(4),
+                                Encryption = reader.GetString(5),
+                            };
+                            list.Add(wifiSignal);
+                        }
                     }
                 }
             }
-            return _list;
-        }
-
-        private string SqlInsert(string BSSID, string SSID, double Latitude, double Longitude,
-            short SignalStrength, string Encryption)
-        {
-            return $@"INSERT INTO {_dataTable} 
-                      (BSSID, SSID, Latitude, Longitude, SignalStrength, Encryption)
-                                           VALUES 
-                      ('{BSSID}', '{SSID}', {Latitude.ToString(new CultureInfo("en-US"))},
-                        {Longitude.ToString(new CultureInfo("en-US"))}, {SignalStrength}, '{Encryption}')";
-        }
-
-        private string SqlUpdate(string BSSID, string SSID, double Latitude, double Longitude,
-            short SignalStrength, string Encryption)
-        {
-            return $@"UPDATE {_dataTable} 
-                    SET SSID='{SSID}', Latitude={Latitude.ToString(new CultureInfo("en-US"))},
-                    Longitude={Longitude.ToString(new CultureInfo("en-US"))}, SignalStrength={SignalStrength},
-                    Encryption='{Encryption}' WHERE BSSID='{BSSID}'";
-        }
-
-        private string SqlCheckRecord(string BSSID)
-        {
-            return $@"SELECT TOP(1) SignalStrength FROM {_dataTable} WHERE BSSID='{BSSID}'";
-        }
-
-        private string SqlSelectAll()
-        {
-            return $@"SELECT * FROM {_dataTable}";
+            return list;
         }
     }
 }
