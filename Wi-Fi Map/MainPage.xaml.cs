@@ -186,8 +186,8 @@ namespace Wi_Fi_Map
                 {
                     try
                     {
-                        mapData.Lat = result.Locations[0].Point.Position.Latitude;
-                        mapData.Lon = result.Locations[0].Point.Position.Longitude;
+                        mapData.Latitude = result.Locations[0].Point.Position.Latitude;
+                        mapData.Longitude = result.Locations[0].Point.Position.Longitude;
                     }
                     catch (ArgumentOutOfRangeException)
                     {

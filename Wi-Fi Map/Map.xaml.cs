@@ -34,7 +34,7 @@ namespace Wi_Fi_Map
 
             MyMap.ColorScheme = mapData.Scheme;
             MyMap.ZoomLevel = 10;
-            BasicGeoposition geoposition = CreateBasicGeoposition(mapData.Lat, mapData.Lon);
+            BasicGeoposition geoposition = CreateBasicGeoposition(mapData.Latitude, mapData.Longitude);
             MyMap.Center = new Geopoint(geoposition);
         }
 
@@ -49,7 +49,7 @@ namespace Wi_Fi_Map
             }
             else if (e.Parameter is MapData map)
             {
-                BasicGeoposition geoposition = CreateBasicGeoposition(map.Lat, map.Lon);
+                BasicGeoposition geoposition = CreateBasicGeoposition(map.Latitude, map.Longitude);
                 ShowOnMapPosition(geoposition);
             }
             else { MyMap.ColorScheme = mapData.Scheme; }
