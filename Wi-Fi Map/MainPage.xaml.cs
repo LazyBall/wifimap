@@ -90,11 +90,13 @@ namespace Wi_Fi_Map
             Geolocator geolocator = new Geolocator();
             Geoposition position = await geolocator.GetGeopositionAsync();
 
+            double Latitude = position.Coordinate.Point.Position.Latitude,
+                Longitude = position.Coordinate.Point.Position.Longitude;
+
             WiFiNetworkReport report = this._wifiScanner.WiFiAdapter.NetworkReport;
 
-            var wifiPoint = new WiFiPointData(position.Coordinate.Timestamp,
-                position.Coordinate.Point.Position.Latitude, position.Coordinate.Point.Position.Longitude);
-
+            var signals = new List<WiFiSignal>();
+            var list = new List<WiFiSignalWithGeoposition>();
             foreach (var availableNetwork in report.AvailableNetworks)
             {
                 WiFiSignal wifiSignal = new WiFiSignal
@@ -109,37 +111,18 @@ namespace Wi_Fi_Map
                     SignalStrength = (short)availableNetwork.NetworkRssiInDecibelMilliwatts,
                     SSID = availableNetwork.Ssid,
                     Uptime = availableNetwork.Uptime.TotalHours.ToString()
-                };               
-                wifiPoint.WiFiSignals.Add(wifiSignal);                
-            }
-            
-            var db = Database.Instance;
-            db.Insert(wifiPoint);
-            MapData mapData = MapData.GetInstance();
-            mapData.AddData(db.SelectAll());
+                };
+                signals.Add(wifiSignal);
+                list.Add(new WiFiSignalWithGeoposition(wifiSignal, Latitude, Longitude));
+            }            
             GPScoords gPScoords = GPScoords.GetInstance();
-            gPScoords.Lat = wifiPoint.Latitude;
-            gPScoords.Lon = wifiPoint.Longitude;
-            gPScoords._signalsAround = wifiPoint;
-        }
-
-        private StringBuilder CreateCsvReport(WiFiPointData wifiPoint)
-        {
-            StringBuilder networkInfo = new StringBuilder();
-          
-            foreach (var wifiSignal in wifiPoint.WiFiSignals)
-            {
-                networkInfo.Append($"{wifiSignal.SSID}|");
-                networkInfo.Append($"{wifiSignal.SignalStrength}|");
-                networkInfo.Append($"{wifiSignal.Encryption}|");
-                networkInfo.Append($"{wifiSignal.BSSID}|");
-                networkInfo.Append($"{wifiPoint.Latitude}|");
-                networkInfo.Append($"{wifiPoint.Longitude}|");
-                
-                networkInfo.AppendLine();
-            }
-
-            return networkInfo;
+            gPScoords.Lat = Latitude;
+            gPScoords.Lon = Longitude;
+            gPScoords._signalsAround = signals;
+            var db = new Database();
+            MapData mapData = MapData.GetInstance();
+            await Task.Run(() => db.AddSignals(list));
+            mapData.AddData(db.GetAllSignals());
         }
 
         private async Task ShowMessage(string message)
@@ -147,7 +130,7 @@ namespace Wi_Fi_Map
             var dialog = new MessageDialog(message);
             await dialog.ShowAsync();
         }
-        //danmoka's page methods
+
         private void SplitViewON_Click(object sender, RoutedEventArgs e)
         {
             MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;

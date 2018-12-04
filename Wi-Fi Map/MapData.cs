@@ -9,8 +9,9 @@ namespace Wi_Fi_Map
 {
     public class MapData
     {
-        private static Lazy<MapData> _uniqueMap = new Lazy<MapData>(() => new MapData());
+        private static MapData _uniqueMap;
         public List<WiFiSignalWithGeoposition> _signals;
+        public string InfoAboutSignals { get; set; } = "";
         public double Lat { get; set; } = 57.622020;
         public double Lon { get; set; } = 39.932172;
         public MapColorScheme Scheme { get; set; } = MapColorScheme.Light;
@@ -21,7 +22,11 @@ namespace Wi_Fi_Map
         }
         public static MapData GetInstance()
         {
-            return _uniqueMap.Value;
+            if (_uniqueMap == null)
+            {
+                _uniqueMap = new MapData();
+            }
+            return _uniqueMap;
         }
         public void AddData(IEnumerable<WiFiSignalWithGeoposition> fiSignals)
         {
