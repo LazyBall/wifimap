@@ -51,13 +51,13 @@ namespace Wi_Fi_Map
         {
             MapData mapData = MapData.GetInstance();
             GPScoords gPScoords = GPScoords.GetInstance();
-            WiFiPointData signals = gPScoords._signalsAround;
-            if (signals.WiFiSignals.Count <= 0)
+            IEnumerable<WiFiSignal> signals = gPScoords._signalsAround;
+            if (signals.Count() <= 0)
             {
                 TextBlock tb = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "Нет информации для отображения!");
                 stackPanelInfo.Children.Add(tb);
             }
-            foreach (WiFiSignal s in signals.WiFiSignals)
+            foreach (WiFiSignal s in signals)
             {
                 TextBlock tbSSID = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, nameForeground, "Name");
                 TextBlock tbSignalStrength = GetTb(textBlockLineHeight, textBlockSymbolFontSize, symbolFontFamily, nameForeground, normalSignalSymbol);
@@ -69,7 +69,6 @@ namespace Wi_Fi_Map
                 TextBlock tbSignalStrengthValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.SignalStrength);
                 TextBlock tbEncryptionValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.Encryption);
                 TextBlock tbMACValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, ValueForeground, " " + s.BSSID);
-                TextBlock tbLanLongValue = GetTb(textBlockLineHeight, textBlockFontSize, fontFamily, new SolidColorBrush(Colors.LightPink), " " + signals.Latitude + " : " + signals.Longitude);
 
                 Check(s, tbSignalStrength, tbEncryption);
 
@@ -84,7 +83,6 @@ namespace Wi_Fi_Map
                 gr.Children.Add(tbMAC);
                 gr.Children.Add(tbMACValue);
                 gr.Children.Add(tbLanLong);
-                gr.Children.Add(tbLanLongValue);
 
                 stackPanelInfo.Children.Add(gr);
 
