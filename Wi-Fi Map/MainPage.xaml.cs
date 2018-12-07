@@ -20,6 +20,10 @@ using System.Text;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Services.Maps;
+using Windows.UI.ViewManagement;
+using Windows.ApplicationModel.Core;
+using Windows.UI;
+using Windows.UI.Xaml.Shapes;
 
 namespace Wi_Fi_Map
 { 
@@ -28,8 +32,9 @@ namespace Wi_Fi_Map
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private WiFiScanner _wifiScanner;      
-
+        private WiFiScanner _wifiScanner;
+        Rectangle rectangle = new Rectangle();
+        
         public MainPage()
         {
             this.InitializeComponent();
@@ -38,7 +43,53 @@ namespace Wi_Fi_Map
             MapListBoxItem.IsSelected = true;
             MyFrame.Navigate(typeof(Map));
             this._wifiScanner = new WiFiScanner();
+            // Hide default title bar.
+            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
+            UpdateTitleBarLayout(coreTitleBar);
 
+            // Set XAML element as a draggable region.
+            Window.Current.SetTitleBar(AppTitleBar);
+
+            // Register a handler for when the size of the overlaid caption control changes.
+            // For example, when the app moves to a screen with a different DPI.
+            coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+
+            // Register a handler for when the title bar visibility changes.
+            // For example, when the title bar is invoked in full screen mode.
+            coreTitleBar.IsVisibleChanged += CoreTitleBar_IsVisibleChanged;
+            var applicationView = ApplicationView.GetForCurrentView();
+            var titleBar = applicationView.TitleBar;
+
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonForegroundColor = Colors.Black;
+        }
+        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            UpdateTitleBarLayout(sender);
+        }
+
+        private void UpdateTitleBarLayout(CoreApplicationViewTitleBar coreTitleBar)
+        {
+            // Get the size of the caption controls area and back button 
+            // (returned in logical pixels), and move your content around as necessary.
+            LeftPaddingColumn.Width = new GridLength(coreTitleBar.SystemOverlayLeftInset);
+            RightPaddingColumn.Width = new GridLength(coreTitleBar.SystemOverlayRightInset);
+
+            // Update title bar control size as needed to account for system size changes.
+            AppTitleBar.Height = coreTitleBar.Height;
+        }
+
+        private void CoreTitleBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            if (sender.IsVisible)
+            {
+                AppTitleBar.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AppTitleBar.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -205,24 +256,25 @@ namespace Wi_Fi_Map
 
         private void Theme_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            var applicationView = ApplicationView.GetForCurrentView();
+            var titleBar = applicationView.TitleBar;
             MapData mapData = MapData.GetInstance();
+            CurrentColorSchemeWifiInfo currentColorSchemeWifi = CurrentColorSchemeWifiInfo.GetInstance();
             if (RequestedTheme == ElementTheme.Light || RequestedTheme == ElementTheme.Default)
             {
                 RequestedTheme = ElementTheme.Dark;
                 mapData.Scheme = MapColorScheme.Dark;
-                SplitViewON.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(190, 129, 9, 135));
-                SplitViewON.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(230, 255, 255, 50));
-                WifiListBoxItem.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(210, 129, 9, 135));
-                WifiListBoxItem.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(230, 255, 255, 50));
+                titleBar.ButtonForegroundColor = Colors.DeepPink;
+                currentColorSchemeWifi.ChangeValues(new NightSchemeForWifiInfo());
+               
             }
             else if (RequestedTheme == ElementTheme.Dark)
             {
                 RequestedTheme = ElementTheme.Light;
                 mapData.Scheme = MapColorScheme.Light;
-                SplitViewON.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(51, 0, 0, 0));
-                SplitViewON.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 0, 0, 0));
-                WifiListBoxItem.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0, 255, 255, 255));
-                WifiListBoxItem.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 0, 0, 0));
+                titleBar.ButtonForegroundColor = Colors.Black;
+
+                currentColorSchemeWifi.ChangeValues(new WhiteSchemeForWifiInfo());
             }
             MyFrame.Navigate(typeof(Map));
         }
