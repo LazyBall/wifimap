@@ -15,6 +15,7 @@
         <Style TargetType="Button" x:Key="MyButtonStyle">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontSize" Value="36"/>
+            <Setter Property="Background" Value="{ThemeResource SystemControlChromeLowAcrylicWindowBrush}"/>
         </Style>
     </Application.Resources>
 

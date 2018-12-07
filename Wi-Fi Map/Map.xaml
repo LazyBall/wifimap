@@ -19,11 +19,54 @@
                          Style="Road"
                          ZoomLevelChanged="MyMap_ZoomLevelChanged">
         </Maps:MapControl>
-        <StackPanel x:Name="StackPanelPosition" HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Orientation="Horizontal"
-                Margin="24">
-            <TextBlock x:Name="TextBlockPosition" Text="&#xE81D;" Tapped="TextBlock_Tapped" Foreground="Blue" Style="{StaticResource MyListTextBoxStyle1}"/>
-        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Button FontFamily="Segoe MDL2 Assets" FontSize="38" Background="Transparent" BorderThickness="0,0,0,0" Content="&#xE71C;" HorizontalAlignment="Center">
+                    <Button.Flyout>
+                        <Flyout Placement="Left">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="Background" Value="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <ComboBox x:Name="ComboBoxEncryptionFilter" Width="150" >
+                                        <TextBlock Text="Ccmp"/>
+                                        <TextBlock Text="Tkip"/>
+                                        <TextBlock Text="None"/>
+                                </ComboBox>
+                                <TextBlock Text="Encryption" Grid.Column="1" FontFamily="Verdana" FontSize="16"/>
+                            </Grid>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <TextBlock x:Name="TextBlockPosition" 
+                               Grid.Row="1"
+                               Text="&#xE81D;" 
+                               Tapped="TextBlock_Tapped" 
+                               Foreground="DodgerBlue" 
+                               Style="{StaticResource MyListTextBoxStyle1}"
+                               HorizontalAlignment="Right" 
+                               VerticalAlignment="Bottom"
+                               Margin="10"/>
+            </Grid>
+        </Grid>
+       
     </Grid>
 </Page>

@@ -61,7 +61,12 @@ namespace Wi_Fi_Map
             string filename = "ms-appx:///Assets/region.png";
             //if (MyMap.ZoomLevel > 18)
             //{filename = "ms-appx:///Assets/wifi-circle.png";}
-            foreach (WiFiSignalWithGeoposition el in mapData._signals)
+            List<WiFiSignalWithGeoposition> filteredSignals = mapData._signals;
+
+            if((ComboBoxEncryptionFilter.SelectedItem as TextBlock).Text != "")
+                filteredSignals = new EncryptionFilter((ComboBoxEncryptionFilter.SelectedItem as TextBlock).Text).Filtering(filteredSignals);
+
+            foreach (WiFiSignalWithGeoposition el in filteredSignals)
             {
                 BasicGeoposition geopositionIcon = CreateBasicGeoposition(el.Latitude, el.Longitude);
                 Geopoint point = new Geopoint(geopositionIcon);
