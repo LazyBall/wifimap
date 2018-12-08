@@ -109,6 +109,9 @@
     </Compile>
     <Compile Include="MapData.cs" />
     <Compile Include="NightSchemeForWifiInfo.cs" />
+    <Compile Include="ParametersPage.xaml.cs">
+      <DependentUpon>ParametersPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="WhiteSchemeForWifiInfo.cs" />
@@ -191,6 +194,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Map.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ParametersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

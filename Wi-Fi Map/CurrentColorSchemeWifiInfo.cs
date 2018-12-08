@@ -12,6 +12,8 @@ namespace Wi_Fi_Map
     {
         private static CurrentColorSchemeWifiInfo _uniq;
 
+        public IColorSchemeForWifiInfo _colorSchemeForWifiInfo =new WhiteSchemeForWifiInfo();
+
         public double BadSignal { get; set; } = -82;
         public double NormalSignal { get; set; } = -60;
         public int TextBlockLineHeight { get; set; } = 21;
@@ -24,15 +26,9 @@ namespace Wi_Fi_Map
         public string PositionSymbol { get; set; } = "\xE1C4";
         public string SymbolFontFamily { get; set; } = "Segoe MDL2 Assets";
         public string FontFamily { get; set; } = "Verdana";
-        public Brush NameForeground { get; set; } = new SolidColorBrush(Colors.Black);
-        public Brush ValueForeground { get; set; } = new SolidColorBrush(Colors.DarkSlateGray);
-        public Brush PositionForeground { get; set; } = new SolidColorBrush(Colors.DarkOliveGreen);
-        public Brush ValuePositionForeground { get; set; } = new SolidColorBrush(Colors.DarkOrange);
         public Brush GoodSignalForeground { get; set; } = new SolidColorBrush(Colors.Lime);
         public Brush NormalSignalForeground { get; set; } = new SolidColorBrush(Colors.Yellow);
         public Brush BadSignalForeground { get; set; }= new SolidColorBrush(Colors.Red);
-        public Brush GridColor { get; set; } = new SolidColorBrush(Colors.LightCyan);
-        public Brush GridColorForRowDelimiter { get; set; } = new SolidColorBrush(Colors.DarkBlue);
 
         private CurrentColorSchemeWifiInfo() {}
         public static CurrentColorSchemeWifiInfo GetInstance()
@@ -43,15 +39,10 @@ namespace Wi_Fi_Map
             }
             return _uniq;
         }
-
+        //стратегия и одиночка
         public void ChangeValues(IColorSchemeForWifiInfo colorSchemeForWifiInfo)
         {
-            NameForeground = colorSchemeForWifiInfo.NameForeground;
-            ValueForeground = colorSchemeForWifiInfo.ValueForeground;
-            PositionForeground = colorSchemeForWifiInfo.PositionForeground;
-            ValuePositionForeground = colorSchemeForWifiInfo.ValuePositionForeground;
-            GridColor = colorSchemeForWifiInfo.GridColor;
-            GridColorForRowDelimiter = colorSchemeForWifiInfo.GridColorForRowDelimiter;
+            _colorSchemeForWifiInfo = colorSchemeForWifiInfo;
         }
     }
 }

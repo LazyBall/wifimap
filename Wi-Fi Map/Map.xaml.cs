@@ -144,5 +144,10 @@ namespace Wi_Fi_Map
             myClickedIcon.Title = myClickedIcon.Tag.ToString();
             myClickedIcon.Tag = Title;
         }
+
+        private void ScanOnce_Click(object sender, RoutedEventArgs e)
+        {
+            //обработка события нажатия на кнопку обновить данные
+        }
     }
 }
