@@ -9,7 +9,16 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid x:Name="mainGrid">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel x:Name="stackPanelInfo" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel x:Name="stackPanelInfo"/>
+                <RelativePanel Grid.Row="1">
+                    <Button Name="RefreshWifiListButton" FontSize="20" FontFamily="Verdana" RelativePanel.AlignLeftWithPanel="True"  Content="Обновить" Click="RefreshWifiListButton_Click"  ToolTipService.ToolTip="Обновить список WIFI"  ToolTipService.Placement="Mouse"/>
+                </RelativePanel>
+            </Grid>
         </ScrollViewer>
         <!--<TextBlock x:Name="txbReport" Margin="5,5,5,5" TextWrapping="Wrap"  ScrollViewer.VerticalScrollBarVisibility="Auto"  LineHeight="24"
                  FontSize="20" FontFamily="Verdana" FontStretch="Normal" FontStyle="Normal" ></TextBlock>-->

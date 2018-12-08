@@ -27,10 +27,11 @@
             <Grid Grid.Column="1" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Button FontFamily="Segoe MDL2 Assets" FontSize="38" Background="Transparent" BorderThickness="0,0,0,0" Content="&#xE71C;" HorizontalAlignment="Center">
+                <Button FontFamily="Segoe MDL2 Assets"  ToolTipService.ToolTip="Фильтр"  ToolTipService.Placement="Mouse" FontSize="38" Background="Transparent" BorderThickness="0,0,0,0" Content="&#xE71C;" HorizontalAlignment="Center">
                     <Button.Flyout>
                         <Flyout Placement="Left">
                             <Flyout.FlyoutPresenterStyle>
@@ -51,20 +52,23 @@
                                         <TextBlock Text="Tkip"/>
                                         <TextBlock Text="None"/>
                                 </ComboBox>
-                                <TextBlock Text="Encryption" Grid.Column="1" FontFamily="Verdana" FontSize="16"/>
+                                <TextBlock Text="Шифрование" Grid.Column="1" FontFamily="Verdana" FontSize="16"/>
                             </Grid>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
+                <Button x:Name="ScanOnce" Click="ScanOnce_Click" Grid.Row="1" ToolTipService.ToolTip="Обновить данные"  ToolTipService.Placement="Mouse" FontFamily="Segoe MDL2 Assets" FontSize="38" Background="Transparent" BorderThickness="0,0,0,0" Content="&#xE72C;" HorizontalAlignment="Center">
+                </Button>
                 <TextBlock x:Name="TextBlockPosition" 
-                               Grid.Row="1"
+                               Grid.Row="2"
                                Text="&#xE81D;" 
                                Tapped="TextBlock_Tapped" 
                                Foreground="DodgerBlue" 
                                Style="{StaticResource MyListTextBoxStyle1}"
                                HorizontalAlignment="Right" 
                                VerticalAlignment="Bottom"
-                               Margin="10"/>
+                               Margin="18"
+                               ToolTipService.ToolTip="Переместиться на текущее местоположение"  ToolTipService.Placement="Mouse"/>
             </Grid>
         </Grid>
        

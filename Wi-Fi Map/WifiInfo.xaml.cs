@@ -42,27 +42,27 @@ namespace Wi_Fi_Map
             MapData mapData = MapData.GetInstance();
             GPScoords gPScoords = GPScoords.GetInstance();
 
-            mainGrid.Background = colorScheme.GridColor;
+            mainGrid.Background = colorScheme._colorSchemeForWifiInfo.GridColor;
             WiFiPointData signals = gPScoords._signalsAround;
             if (signals.WiFiSignals.Count <= 0)
             {
-                TextBlock tb = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme.NameForeground, "Нет информации для отображения!");
+                TextBlock tb = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "Нет информации для отображения!");
                 stackPanelInfo.Children.Add(tb);
             }
 
             foreach (WiFiSignal s in signals.WiFiSignals)
             {
-                TextBlock tbSSID = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme.NameForeground, "Name");
-                TextBlock tbSignalStrength = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme.NameForeground, colorScheme.NormalSignalSymbol);
-                TextBlock tbEncryption = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme.NameForeground, colorScheme.EncriptionSymbol);
-                TextBlock tbMAC = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme.NameForeground, "MAC");
-                TextBlock tbLanLong = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme.PositionForeground, colorScheme.PositionSymbol);
+                TextBlock tbSSID = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "Имя");
+                TextBlock tbSignalStrength = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.NormalSignalSymbol);
+                TextBlock tbEncryption = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.EncriptionSymbol);
+                TextBlock tbMAC = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "MAC");
+                TextBlock tbLanLong = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.PositionForeground, colorScheme.PositionSymbol);
 
-                TextBlock tbSSIDValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme.ValueForeground, " " + s.SSID);
-                TextBlock tbSignalStrengthValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme.ValueForeground, " " + s.SignalStrength);
-                TextBlock tbEncryptionValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme.ValueForeground, " " + s.Encryption);
-                TextBlock tbMACValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme.ValueForeground, " " + s.BSSID);
-                TextBlock tbLanLongValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme.ValuePositionForeground, " " + signals.Latitude + " : " + signals.Longitude);
+                TextBlock tbSSIDValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SSID);
+                TextBlock tbSignalStrengthValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SignalStrength);
+                TextBlock tbEncryptionValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.Encryption);
+                TextBlock tbMACValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.BSSID);
+                TextBlock tbLanLongValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValuePositionForeground, " " + signals.Latitude + " : " + signals.Longitude);
 
                 Check(s, tbSignalStrength, tbEncryption);
 
@@ -84,7 +84,7 @@ namespace Wi_Fi_Map
                 Grid grid = new Grid
                 {
                     Height = 1,
-                    Background = colorScheme.GridColorForRowDelimiter,
+                    Background = colorScheme._colorSchemeForWifiInfo.GridColorForRowDelimiter,
                     Opacity = 0.3
 
                 };
@@ -134,6 +134,11 @@ namespace Wi_Fi_Map
         {
             var dialog = new MessageDialog(message);
             await dialog.ShowAsync();
+        }
+
+        private void RefreshWifiListButton_Click(object sender, RoutedEventArgs e)
+        {
+            //обработка события нажатия на кнопку обновить
         }
     }
 }

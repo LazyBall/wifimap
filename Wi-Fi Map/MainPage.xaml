@@ -39,11 +39,11 @@
             <RelativePanel>
                 <Button Name="SplitViewON" RelativePanel.AlignBottomWithPanel="True"  Content="&#xE700;" Click="SplitViewON_Click" Style="{StaticResource MyButtonStyle}"/>
                 <Button Name="BackButton" RelativePanel.RightOf="SplitViewON" Content="&#xE0C4;" Click="BackButton_Click" Style="{StaticResource MyButtonStyle}"/>
-                <TextBlock Name="TitleTextBlock" RelativePanel.RightOf="BackButton" FontSize="28" FontWeight="Bold" Margin="20,5,0,0"/>
-                <Button Name="SearchButton" RelativePanel.AlignRightWithPanel="True" Content="&#xE1A3;" Click="SearchButton_Click" Style="{StaticResource MyButtonStyle}"/>
-                <TextBox Name="SearchTextBox" RelativePanel.LeftOf="SearchButton" Height="48" Width="200" FontSize="24" PlaceholderText="Search" BorderThickness="0,0,0,0"/>
+                <TextBlock Name="TitleTextBlock" RelativePanel.RightOf="BackButton" FontSize="28" FontWeight="Bold" Margin="20,5,0,0" TextWrapping="Wrap"/>
+                <Button Name="SearchButton" RelativePanel.AlignRightWithPanel="True" Content="&#xE1A3;" Click="SearchButton_Click" ToolTipService.ToolTip="Поиск по адресу"  ToolTipService.Placement="Mouse" Style="{StaticResource MyButtonStyle}"/>
+                <TextBox Name="SearchTextBox" RelativePanel.LeftOf="SearchButton" Height="48" Width="200" FontSize="24" PlaceholderText="Поиск" BorderThickness="0,0,0,0"/>
             </RelativePanel>
-            <SplitView Name="MySplitView" Grid.Row="1" DisplayMode="CompactOverlay" OpenPaneLength="200" CompactPaneLength="57" HorizontalAlignment="Stretch">
+            <SplitView Name="MySplitView" Grid.Row="1" DisplayMode="CompactOverlay" OpenPaneLength="250" CompactPaneLength="57" HorizontalAlignment="Stretch">
                 <SplitView.Pane>
                     <Grid Background="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}">
                         <Grid.RowDefinitions>
@@ -54,14 +54,14 @@
                             <ListBoxItem Name="WifiListBoxItem">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="&#xE701;"  Style="{StaticResource MyListTextBoxStyle1}"/>
-                                    <TextBlock Text="WIFI list" Style="{StaticResource MyListTextBoxStyle2}"/>
+                                    <TextBlock Text="Список WIFI" Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </StackPanel>
                             </ListBoxItem>
 
                             <ListBoxItem Name="MapListBoxItem" >
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="&#xE909;" Style="{StaticResource MyListTextBoxStyle1}"/>
-                                    <TextBlock Text="Map"      Style="{StaticResource MyListTextBoxStyle2}"/>
+                                    <TextBlock Text="Карта"    Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </StackPanel>
                             </ListBoxItem>
 
@@ -72,23 +72,32 @@
                             </StackPanel>
                         </ListBoxItem>-->
 
-                            <ListBoxItem Name="Theme" Tapped="Theme_Tapped">
+                            <ListBoxItem Name="Theme" >
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="&#xE708;"  Style="{StaticResource MyListTextBoxStyle1}"/>
-                                    <TextBlock Text="Theme"     Style="{StaticResource MyListTextBoxStyle2}"/>
+                                    <TextBlock Text="Тема"     Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </StackPanel>
                             </ListBoxItem>
                         </ListBox>
+                        <!--<ListBox SelectionMode="Single" Name="Icons2ListBox" SelectionChanged="Icons2ListBox_SelectionChanged" Grid.Row="0" VerticalAlignment="Bottom">
+                            <ListBoxItem Name="ParameterListBoxItem">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE713;"    Style="{StaticResource MyListTextBoxStyle1}"/>
+                                    <TextBlock Text="Параметры" Style="{StaticResource MyListTextBoxStyle2}"/>
+                                </StackPanel>
+                            </ListBoxItem>
+                        </ListBox>-->
+
                         <StackPanel VerticalAlignment="Bottom">
-                            <Button  Name="ScanOnce" Content="&#xE72C;" Click="ScanOnce_ClickAsync" Style="{StaticResource MyButtonStyle}"/>
-                            <ToggleSwitch x:Name="ToogleSwitch" Margin="5,0,0,0" Toggled="ToggleSwitch_Toggled">
+                            <Button  Name="ParametrsButton" Content="&#xE713;" Click="ParametrsButton_Click" FontFamily="Segoe MDL2 Assets" FontSize="41" ToolTipService.ToolTip="Параметры"  ToolTipService.Placement="Mouse" Background="Transparent" BorderThickness="0,0,0,0" />
+                            <!--<ToggleSwitch x:Name="ToogleSwitch" Margin="5,0,0,0" Toggled="ToggleSwitch_Toggled">
                                 <ToggleSwitch.OffContent>
                                     <TextBlock Text="Scan off" Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </ToggleSwitch.OffContent>
                                 <ToggleSwitch.OnContent>
                                     <TextBlock Text="Scan on" Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </ToggleSwitch.OnContent>
-                            </ToggleSwitch>
+                            </ToggleSwitch>-->
                         </StackPanel>
                     </Grid>
                 </SplitView.Pane>
