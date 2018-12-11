@@ -47,10 +47,11 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <ComboBox x:Name="ComboBoxEncryptionFilter" Width="150" >
+                                <ComboBox x:Name="comboBoxEncryptionFilter" Width="150" >
                                         <TextBlock Text="Ccmp"/>
                                         <TextBlock Text="Tkip"/>
                                         <TextBlock Text="None"/>
+                                        <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
                                 </ComboBox>
                                 <TextBlock Text="Шифрование" Grid.Column="1" FontFamily="Verdana" FontSize="16"/>
                             </Grid>
@@ -62,7 +63,7 @@
                 <TextBlock x:Name="TextBlockPosition" 
                                Grid.Row="2"
                                Text="&#xE81D;" 
-                               Tapped="TextBlock_Tapped" 
+                               Tapped="TextBlockPosition_Tapped" 
                                Foreground="DodgerBlue" 
                                Style="{StaticResource MyListTextBoxStyle1}"
                                HorizontalAlignment="Right" 

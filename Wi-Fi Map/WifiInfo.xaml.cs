@@ -1,22 +1,15 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI;
+using System.Threading;
+using Windows.Devices.Geolocation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Diagnostics;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,61 +18,87 @@ namespace Wi_Fi_Map
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
-    public sealed partial class WifiInfo : Page
+    public sealed partial class WiFiInfo : Page
     {
         //Constants--------------------------------------------------------------
-        
-        
+        WiFiScanner _wiFiScanner;
+
         //-----------------------------------------------------------------------
-        public WifiInfo()
+
+        public WiFiInfo()
         {
             this.InitializeComponent();
-            
+            this._wiFiScanner = new WiFiScanner();
         }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             CurrentColorSchemeWifiInfo colorScheme = CurrentColorSchemeWifiInfo.GetInstance();
-            MapData mapData = MapData.GetInstance();
-            GPScoords gPScoords = GPScoords.GetInstance();
-
             mainGrid.Background = colorScheme._colorSchemeForWifiInfo.GridColor;
-            WiFiPointData signals = gPScoords._signalsAround;
-            if (signals.WiFiSignals.Count <= 0)
+            RefreshWifiListButton_Click(RefreshWifiListButton, new RoutedEventArgs());
+        }
+          
+        private async void RefreshWifiListButton_Click(object sender, RoutedEventArgs e)
+        {
+            //обработка события нажатия на кнопку обновить
+            //var timer = new Stopwatch();
+            //timer.Start();
+            var bt = sender as Control;
+            if (bt != null) bt.IsEnabled = false;
+            stackPanelInfo.Children.Clear();
+            if (_wiFiScanner.WiFiAdapter == null)
             {
-                TextBlock tb = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "Нет информации для отображения!");
-                stackPanelInfo.Children.Add(tb);
+                try
+                {
+                    await _wiFiScanner.InitializeScanner();
+                }
+                catch
+                {                    
+                    var dialog = new MessageDialog("Проверьте, влючен ли Wi-Fi.");
+                    await dialog.ShowAsync();
+                    AddVisualInfo(new List<WiFiSignal>(0));
+                }
             }
-
-            foreach (WiFiSignal s in signals.WiFiSignals)
+            if (_wiFiScanner.WiFiAdapter != null)
             {
-                TextBlock tbSSID = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "Имя");
-                TextBlock tbSignalStrength = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.NormalSignalSymbol);
-                TextBlock tbEncryption = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.EncriptionSymbol);
-                TextBlock tbMAC = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "MAC");
-                TextBlock tbLanLong = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.PositionForeground, colorScheme.PositionSymbol);
+                var list = await GetWiFiSignalsData();
+                Thread thread = new Thread(() => SendDataToDatabase(list));
+                thread.Start();
+                //Task.Run(() => SendDataToDatabase(list)).GetAwaiter();
 
-                TextBlock tbSSIDValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SSID);
-                TextBlock tbSignalStrengthValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SignalStrength);
-                TextBlock tbEncryptionValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.Encryption);
-                TextBlock tbMACValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.BSSID);
-                TextBlock tbLanLongValue = GetTb(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValuePositionForeground, " " + signals.Latitude + " : " + signals.Longitude);
+                AddVisualInfo(list);               
+            }
+            if (bt != null) bt.IsEnabled = true;
+            //timer.Stop();
+            //var dialog1 = new MessageDialog(String.Format("Завершаю обновление {0}", timer.ElapsedMilliseconds));
+            //await dialog1.ShowAsync();
+        }
 
+        private void AddVisualInfo(IEnumerable<WiFiSignal> signals)
+        {
+            CurrentColorSchemeWifiInfo colorScheme = CurrentColorSchemeWifiInfo.GetInstance();
+            int count = 0;
+            foreach (WiFiSignal s in signals)
+            {
+                count++;
+                WrapPanel panel = new WrapPanel();               
+                TextBlock tbSSID = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "SSID: ");
+                TextBlock tbSignalStrength = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.NormalSignalSymbol);
+                TextBlock tbEncryption = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.EncriptionSymbol);
+                TextBlock tbMAC = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "BSSID:");
+                TextBlock tbSSIDValue = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SSID);
+                TextBlock tbSignalStrengthValue = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SignalStrength);
+                TextBlock tbEncryptionValue = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.Encryption);
+                TextBlock tbMACValue = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.BSSID);
                 Check(s, tbSignalStrength, tbEncryption);
-
-                WrapPanel gr = new WrapPanel();
-
-                gr.Children.Add(tbSSID);
-                gr.Children.Add(tbSSIDValue);
-                gr.Children.Add(tbSignalStrength);
-                gr.Children.Add(tbSignalStrengthValue);
-                gr.Children.Add(tbEncryption);
-                gr.Children.Add(tbEncryptionValue);
-                gr.Children.Add(tbMAC);
-                gr.Children.Add(tbMACValue);
-                gr.Children.Add(tbLanLong);
-                gr.Children.Add(tbLanLongValue);
-
-                stackPanelInfo.Children.Add(gr);
+                panel.Children.Add(tbSSID);
+                panel.Children.Add(tbSSIDValue);
+                panel.Children.Add(tbSignalStrength);
+                panel.Children.Add(tbSignalStrengthValue);
+                panel.Children.Add(tbEncryption);
+                panel.Children.Add(tbEncryptionValue);
+                panel.Children.Add(tbMAC);
+                panel.Children.Add(tbMACValue);
 
                 Grid grid = new Grid
                 {
@@ -88,36 +107,17 @@ namespace Wi_Fi_Map
                     Opacity = 0.3
 
                 };
-
+                stackPanelInfo.Children.Add(panel);
                 stackPanelInfo.Children.Add(grid);
             }
+            if (count == 0)
+            {
+                TextBlock tb = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "Нет информации для отображения!");
+                stackPanelInfo.Children.Add(tb);
+            }
         }
 
-        private void Check(WiFiSignal s, TextBlock tbSignalStrength, TextBlock tbEncryption)
-        {
-            CurrentColorSchemeWifiInfo colorScheme = CurrentColorSchemeWifiInfo.GetInstance();
-            if (s.SignalStrength <= colorScheme.BadSignal)
-            {
-                tbSignalStrength.Foreground = colorScheme.BadSignalForeground;
-                tbSignalStrength.Text = colorScheme.BadSignalSymbol;
-            }
-            else if (s.SignalStrength > colorScheme.BadSignal && s.SignalStrength <= colorScheme.NormalSignal)
-            {
-                tbSignalStrength.Foreground = colorScheme.NormalSignalForeground;
-                tbSignalStrength.Text = colorScheme.NormalSignalSymbol;
-            }
-            else
-            {
-                tbSignalStrength.Foreground = colorScheme.GoodSignalForeground;
-                tbSignalStrength.Text = colorScheme.GoodSignalSymbol;
-            }
-            if (s.Encryption != "None")
-                tbEncryption.Foreground = colorScheme.BadSignalForeground;
-            else
-                tbEncryption.Foreground = colorScheme.GoodSignalForeground;
-        }
-
-        private static TextBlock GetTb(int tblh, int tbfs, string ff, Brush brush, string text)
+        private static TextBlock GetTextBlockInFormat(int tblh, int tbfs, string ff, Brush brush, string text)
         {
             return new TextBlock
             {
@@ -130,15 +130,78 @@ namespace Wi_Fi_Map
                 Text = text
             };
         }
-        private async Task ShowMessage(string message)
+
+        private static void Check(WiFiSignal signal, TextBlock tbSignalStrength, TextBlock tbEncryption)
         {
-            var dialog = new MessageDialog(message);
-            await dialog.ShowAsync();
+            CurrentColorSchemeWifiInfo colorScheme = CurrentColorSchemeWifiInfo.GetInstance();
+            if (signal.SignalStrength <= colorScheme.BadSignal)
+            {
+                tbSignalStrength.Foreground = colorScheme.BadSignalForeground;
+                tbSignalStrength.Text = colorScheme.BadSignalSymbol;
+            }
+            else if (signal.SignalStrength > colorScheme.BadSignal && signal.SignalStrength <= colorScheme.NormalSignal)
+            {
+                tbSignalStrength.Foreground = colorScheme.NormalSignalForeground;
+                tbSignalStrength.Text = colorScheme.NormalSignalSymbol;
+            }
+            else
+            {
+                tbSignalStrength.Foreground = colorScheme.GoodSignalForeground;
+                tbSignalStrength.Text = colorScheme.GoodSignalSymbol;
+            }
+            if (signal.Encryption != "None")
+                tbEncryption.Foreground = colorScheme.BadSignalForeground;
+            else
+                tbEncryption.Foreground = colorScheme.GoodSignalForeground;
         }
 
-        private void RefreshWifiListButton_Click(object sender, RoutedEventArgs e)
+        private async Task<IEnumerable<WiFiSignal>> GetWiFiSignalsData()
         {
-            //обработка события нажатия на кнопку обновить
+            await this._wiFiScanner.ScanForNetworks();
+            return await Task.Run(() =>
+            {
+                var signals = new List<WiFiSignal>();
+                foreach (var availableNetwork in _wiFiScanner.WiFiAdapter.NetworkReport.AvailableNetworks)
+                {
+                    WiFiSignal wifiSignal = new WiFiSignal
+                    {
+                        BeaconInterval = availableNetwork.BeaconInterval.TotalSeconds.ToString(),
+                        BSSID = availableNetwork.Bssid,
+                        ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
+                        Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString(),
+                        IsWiFiDirect = availableNetwork.IsWiFiDirect,
+                        NetworkKind = availableNetwork.NetworkKind.ToString(),
+                        PhyKind = availableNetwork.PhyKind.ToString(),
+                        SignalStrength = (short)availableNetwork.NetworkRssiInDecibelMilliwatts,
+                        SSID = availableNetwork.Ssid,
+                        Uptime = availableNetwork.Uptime.TotalHours.ToString()
+                    };
+                    signals.Add(wifiSignal);
+                }
+                return signals;
+            });
+        }
+
+        private static async void SendDataToDatabase(IEnumerable<WiFiSignal> signals)
+        {
+            try
+            {
+                Geolocator geolocator = new Geolocator();
+                Geoposition position = await geolocator.GetGeopositionAsync();
+                double latitude = position.Coordinate.Point.Position.Latitude,
+                   longitude = position.Coordinate.Point.Position.Longitude;
+                var list = new List<WiFiSignalWithGeoposition>();
+                foreach (var signal in signals)
+                {
+                    list.Add(new WiFiSignalWithGeoposition(signal, latitude, longitude));
+                }
+                var db = new Database();
+                db.AddSignals(list);
+            }
+            catch
+            {
+
+            }      
         }
     }
 }

@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI;
+using Windows.UI.Popups;
+using System.Threading.Tasks;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -30,16 +26,18 @@ namespace Wi_Fi_Map
         public Map()
         {
             this.InitializeComponent();
+            comboBoxEncryptionFilter.SelectedItem = defaultTextBlock;
             MapData mapData = MapData.GetInstance();
 
             MyMap.ColorScheme = mapData.Scheme;
             MyMap.ZoomLevel = 10;
-            BasicGeoposition geoposition = CreateBasicGeoposition(mapData.Lat, mapData.Lon);
+            BasicGeoposition geoposition = CreateBasicGeoposition(mapData.Latitude, mapData.Longitude);
             MyMap.Center = new Geopoint(geoposition);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            ScanOnce_Click(ScanOnce, new RoutedEventArgs());
             MapData mapData = MapData.GetInstance();
             if (e.Parameter is GPScoords position)
             {
@@ -49,7 +47,7 @@ namespace Wi_Fi_Map
             }
             else if (e.Parameter is MapData map)
             {
-                BasicGeoposition geoposition = CreateBasicGeoposition(map.Lat, map.Lon);
+                BasicGeoposition geoposition = CreateBasicGeoposition(map.Latitude, map.Longitude);
                 ShowOnMapPosition(geoposition);
             }
             else { MyMap.ColorScheme = mapData.Scheme; }
@@ -59,12 +57,11 @@ namespace Wi_Fi_Map
         {
             MyMap.MapElements.Clear();
             string filename = "ms-appx:///Assets/region.png";
-            //if (MyMap.ZoomLevel > 18)
-            //{filename = "ms-appx:///Assets/wifi-circle.png";}
+
             List<WiFiSignalWithGeoposition> filteredSignals = mapData._signals;
 
-            if((ComboBoxEncryptionFilter.SelectedItem as TextBlock).Text != "")
-                filteredSignals = new EncryptionFilter((ComboBoxEncryptionFilter.SelectedItem as TextBlock).Text).Filtering(filteredSignals);
+            if ((comboBoxEncryptionFilter.SelectedItem as TextBlock)?. Text != "Не выбрано")
+                filteredSignals = new EncryptionFilter((comboBoxEncryptionFilter.SelectedItem as TextBlock).Text).Filtering(filteredSignals);
 
             foreach (WiFiSignalWithGeoposition el in filteredSignals)
             {
@@ -76,7 +73,8 @@ namespace Wi_Fi_Map
                     Image = RandomAccessStreamReference.CreateFromUri(new Uri(filename)),
                     NormalizedAnchorPoint = new Point(0.5, 0.5),
                     Title = el.SSID,
-                    Tag = String.Join('\n', el.SSID, el.Encryption, el.SignalStrength, el.Latitude + " : " + el.Longitude, el.BSSID)               
+                    Tag = string.Join('\n', "SSID: " + el.SSID, "BSSID: " + el.BSSID, "Encryption: " + el.Encryption,
+                    "Signal Strength: " + el.SignalStrength, "Position: "+ el.Latitude + " : " + el.Longitude)               
                 };
                 MyMap.MapElements.Add(mapIcon);
             }
@@ -104,18 +102,7 @@ namespace Wi_Fi_Map
         {
             MapData mapData = MapData.GetInstance();
             if (MyMap.ZoomLevel < 9) MyMap.ZoomLevel = 9;
-            if (MyMap.ZoomLevel > 20) MyMap.ZoomLevel = 20;
-            //if (MyMap.ZoomLevel > 18) 
-            //{
-            //    foreach (MapIcon el in MyMap.MapElements)
-            //    {el.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/wifi-circle.png"));}
-            //    //(MyMap.Children[0] as Image).Source= new BitmapImage(new Uri("ms-appx:///Assets/circle-blue-overlay100.png"));
-            //}
-            //else
-            //{
-            //    foreach (MapIcon el in MyMap.MapElements)
-            //    {el.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/region.png"));}
-            //}
+            if (MyMap.ZoomLevel > 20) MyMap.ZoomLevel = 20;           
         }
 
         private static BasicGeoposition CreateBasicGeoposition(double x,double y)
@@ -127,14 +114,30 @@ namespace Wi_Fi_Map
             };
         }
 
-        private void TextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void TextBlockPosition_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            var bt = sender as Control;
+            if (bt != null) bt.IsEnabled = false;
             GPScoords gps = GPScoords.GetInstance();
+            try
+            {
+                Geolocator geolocator = new Geolocator();
+                Geoposition position = await geolocator.GetGeopositionAsync();
+                gps.Lat = position.Coordinate.Point.Position.Latitude;
+                gps.Lon = position.Coordinate.Point.Position.Longitude;
+            }
+            catch
+            {
+                MessageDialog md = new MessageDialog("Проверьте, включена ли геолокация.");
+                await md.ShowAsync();
+            }
+
             if (gps.Lat != -1 && gps.Lon != -1)
             {
                 BasicGeoposition geoposition = CreateBasicGeoposition(gps.Lat, gps.Lon);
                 ShowOnMapPosition(geoposition);
             }
+            if (bt != null) bt.IsEnabled = true;
         }
 
         private void MyMap_MapElementClick(MapControl sender, MapElementClickEventArgs args)
@@ -145,9 +148,27 @@ namespace Wi_Fi_Map
             myClickedIcon.Tag = Title;
         }
 
-        private void ScanOnce_Click(object sender, RoutedEventArgs e)
+        private async void ScanOnce_Click(object sender, RoutedEventArgs e)
         {
             //обработка события нажатия на кнопку обновить данные
+            var bt = sender as Control;
+            if (bt != null) bt.IsEnabled = false;
+            IEnumerable<WiFiSignalWithGeoposition> signals;
+            try
+            {
+                var db = new Database();
+                signals = await db.GetAllSignalsAsync();
+            }
+            catch
+            {
+                MessageDialog md = new MessageDialog("Проверьте наличие доступа в сеть.");
+                await md.ShowAsync();
+                signals = new List<WiFiSignalWithGeoposition>(0);
+            }            
+            MapData mapData = MapData.GetInstance();
+            mapData.AddData(signals);
+            AddWifiPointsToMap(mapData);
+            if (bt != null) bt.IsEnabled = true;
         }
     }
 }
