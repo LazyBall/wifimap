@@ -62,10 +62,11 @@ namespace Wi_Fi_Map
 
             if ((comboBoxEncryptionFilter.SelectedItem as TextBlock)?. Text != "Не выбрано")
                 filteredSignals = new EncryptionFilter((comboBoxEncryptionFilter.SelectedItem as TextBlock).Text).Filtering(filteredSignals);
-
+            var random = new Random(DateTime.Now.Millisecond);
             foreach (WiFiSignalWithGeoposition el in filteredSignals)
             {
-                BasicGeoposition geopositionIcon = CreateBasicGeoposition(el.Latitude, el.Longitude);
+                BasicGeoposition geopositionIcon = CreateBasicGeoposition(el.Latitude + ((random.NextDouble() - 0.5) / 7000.0),
+                    el.Longitude + ((random.NextDouble() - 0.5) / 7000.0));
                 Geopoint point = new Geopoint(geopositionIcon);
                 MapIcon mapIcon = new MapIcon
                 {
