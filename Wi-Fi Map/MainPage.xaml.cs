@@ -1,22 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.Devices.WiFi;
-using System.Collections.ObjectModel;
 using Windows.UI.Popups;
 using System.Threading.Tasks;
-using System.Text;
 using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.Services.Maps;
@@ -32,17 +18,16 @@ namespace Wi_Fi_Map
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private WiFiScanner _wifiScanner;
         Rectangle rectangle = new Rectangle();
         
         public MainPage()
         {
             this.InitializeComponent();
+            RequestedTheme = ElementTheme.Light;
             BackButton.Visibility = Visibility.Collapsed;
             TitleTextBlock.Text = "Карта";
             MapListBoxItem.IsSelected = true;
-            MyFrame.Navigate(typeof(Map));
-            this._wifiScanner = new WiFiScanner();
+            //MyFrame.Navigate(typeof(Map));
             // Hide default title bar.
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
@@ -64,6 +49,7 @@ namespace Wi_Fi_Map
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonForegroundColor = Colors.Black;
         }
+
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
             UpdateTitleBarLayout(sender);
@@ -90,96 +76,8 @@ namespace Wi_Fi_Map
             {
                 AppTitleBar.Visibility = Visibility.Collapsed;
             }
-        }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            try{await InitializeScanner();}
-            catch (Exception ex)
-            {
-                MessageDialog md = new MessageDialog(ex.Message);
-                await md.ShowAsync();
-            }
-        }
-
-        private async Task InitializeScanner()
-        {
-            try
-            {
-                await this._wifiScanner.InitializeScanner();
-            }
-            catch (Exception ex)
-            {
-                MessageDialog md = new MessageDialog(ex.Message);
-                await md.ShowAsync();
-            }
-        }
-
-        private async void Timer_Tick(object sender, object e)
-        {
-            try
-            {
-                await RunWifiScan(); 
-                if (WifiListBoxItem.IsSelected)
-                {
-                    MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
-                    MyFrame.Navigate(typeof(WifiInfo));
-                }
-                else MyFrame.Navigate(typeof(Map),GPScoords.GetInstance());
-            }
-            catch (Exception ex)
-            {
-                MessageDialog md = new MessageDialog(ex.Message);
-                await md.ShowAsync();
-            }
-        }
-
-        private async Task RunWifiScan()
-        {
-            await this._wifiScanner.ScanForNetworks();
-            
-            Geolocator geolocator = new Geolocator();
-            Geoposition position = await geolocator.GetGeopositionAsync();
-
-            WiFiNetworkReport report = this._wifiScanner.WiFiAdapter.NetworkReport;
-
-            var wifiPoint = new WiFiPointData(position.Coordinate.Timestamp,
-                position.Coordinate.Point.Position.Latitude, position.Coordinate.Point.Position.Longitude);
-
-            foreach (var availableNetwork in report.AvailableNetworks)
-            {
-                WiFiSignal wifiSignal = new WiFiSignal
-                {
-                    BeaconInterval = availableNetwork.BeaconInterval.TotalSeconds.ToString(),
-                    BSSID = availableNetwork.Bssid,
-                    ChannelCenterFrequencyInKilohertz = availableNetwork.ChannelCenterFrequencyInKilohertz,
-                    Encryption = availableNetwork.SecuritySettings.NetworkEncryptionType.ToString(),
-                    IsWiFiDirect = availableNetwork.IsWiFiDirect,
-                    NetworkKind = availableNetwork.NetworkKind.ToString(),
-                    PhyKind = availableNetwork.PhyKind.ToString(),
-                    SignalStrength = (short)availableNetwork.NetworkRssiInDecibelMilliwatts,
-                    SSID = availableNetwork.Ssid,
-                    Uptime = availableNetwork.Uptime.TotalHours.ToString()
-                };               
-                wifiPoint.WiFiSignals.Add(wifiSignal);                
-            }
-            
-            var db = Database.Instance;
-            db.Insert(wifiPoint);
-            MapData mapData = MapData.GetInstance();
-            mapData.AddData(db.SelectAll());
-            GPScoords gPScoords = GPScoords.GetInstance();
-            gPScoords.Lat = wifiPoint.Latitude;
-            gPScoords.Lon = wifiPoint.Longitude;
-            gPScoords._signalsAround = wifiPoint;
-        }
-
-        private async Task ShowMessage(string message)
-        {
-            var dialog = new MessageDialog(message);
-            await dialog.ShowAsync();
-        }
-        //danmoka's page methods
+        }              
+      
         private void SplitViewON_Click(object sender, RoutedEventArgs e)
         {
             MySplitView.IsPaneOpen = !MySplitView.IsPaneOpen;
@@ -190,8 +88,8 @@ namespace Wi_Fi_Map
             if (WifiListBoxItem.IsSelected)
             {
                 BackButton.Visibility = Visibility.Visible;
-                MyFrame.Navigate(typeof(WifiInfo));
-                TitleTextBlock.Text = "Список WIFI";
+                MyFrame.Navigate(typeof(WiFiInfo));
+                TitleTextBlock.Text = "Список Wi-Fi";
             }
             else if (MapListBoxItem.IsSelected)
             {
@@ -206,7 +104,7 @@ namespace Wi_Fi_Map
                 var titleBar = applicationView.TitleBar;
                 MapData mapData = MapData.GetInstance();
                 CurrentColorSchemeWifiInfo currentColorSchemeWifi = CurrentColorSchemeWifiInfo.GetInstance();
-                if (RequestedTheme == ElementTheme.Light || RequestedTheme == ElementTheme.Default)
+                if (RequestedTheme == ElementTheme.Light)
                 {
                     RequestedTheme = ElementTheme.Dark;
                     mapData.Scheme = MapColorScheme.Dark;
@@ -238,6 +136,7 @@ namespace Wi_Fi_Map
 
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
         {
+            MapListBoxItem.IsSelected = true;
             if (!(string.IsNullOrWhiteSpace(SearchTextBox.Text)))
             {
                 string addressToGeocode = SearchTextBox.Text;
@@ -255,8 +154,8 @@ namespace Wi_Fi_Map
                 {
                     try
                     {
-                        mapData.Lat = result.Locations[0].Point.Position.Latitude;
-                        mapData.Lon = result.Locations[0].Point.Position.Longitude;
+                        mapData.Latitude = result.Locations[0].Point.Position.Latitude;
+                        mapData.Longitude = result.Locations[0].Point.Position.Longitude;
                     }
                     catch (ArgumentOutOfRangeException)
                     {
@@ -271,35 +170,10 @@ namespace Wi_Fi_Map
                     await md.ShowAsync();
                 }
                 this.SearchTextBox.Text = "";
-            } //MyMap.ColorScheme = MapColorScheme.Dark;
+            } 
         }
 
-        //private void Theme_Tapped(object sender, TappedRoutedEventArgs e)
-        //{
-        //    var applicationView = ApplicationView.GetForCurrentView();
-        //    var titleBar = applicationView.TitleBar;
-        //    MapData mapData = MapData.GetInstance();
-        //    CurrentColorSchemeWifiInfo currentColorSchemeWifi = CurrentColorSchemeWifiInfo.GetInstance();
-        //    if (RequestedTheme == ElementTheme.Light || RequestedTheme == ElementTheme.Default)
-        //    {
-        //        RequestedTheme = ElementTheme.Dark;
-        //        mapData.Scheme = MapColorScheme.Dark;
-        //        titleBar.ButtonForegroundColor = Colors.DeepPink;
-        //        currentColorSchemeWifi.ChangeValues(new NightSchemeForWifiInfo());
-               
-        //    }
-        //    else if (RequestedTheme == ElementTheme.Dark)
-        //    {
-        //        RequestedTheme = ElementTheme.Light;
-        //        mapData.Scheme = MapColorScheme.Light;
-        //        titleBar.ButtonForegroundColor = Colors.Black;
-
-        //        currentColorSchemeWifi.ChangeValues(new WhiteSchemeForWifiInfo());
-        //    }
-        //    MyFrame.Navigate(typeof(Map));
-        //}
-
-        private void ParametrsButton_Click(object sender, RoutedEventArgs e)
+        private void ParametersButton_Click(object sender, RoutedEventArgs e)
         {
             if ((IconsListBox.SelectedItem as ListBoxItem) != null)
             {
@@ -310,43 +184,9 @@ namespace Wi_Fi_Map
             MyFrame.Navigate(typeof(ParametersPage));
         }
 
-        //private async void ScanOnce_ClickAsync(object sender, RoutedEventArgs e)
-        //{
-        //    ScanOnce.IsEnabled = false;
-        //    ToogleSwitch.IsEnabled = false;
-        //    try
-        //    {
-        //        await RunWifiScan();
-        //        if (WifiListBoxItem.IsSelected)
-        //        {
-        //            MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
-        //            MyFrame.Navigate(typeof(WifiInfo));
-        //        }
-        //        else MyFrame.Navigate(typeof(Map), GPScoords.GetInstance());
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageDialog md = new MessageDialog(ex.Message);
-        //        await md.ShowAsync();
-        //    }
-        //    ScanOnce.IsEnabled = true;
-        //    ToogleSwitch.IsEnabled = true;
-        //}
-
-        //private void ToggleSwitch_Toggled(object sender, RoutedEventArgs e)
-        //{
-        //    Timer timer = Timer.GetInstance();
-        //    if (ToogleSwitch.IsOn==true)
-        //    {
-        //        timer.dispatcherTimer.Tick += Timer_Tick;//в одиночку таймер
-        //        timer.dispatcherTimer.Start();
-        //        ScanOnce.Visibility = Visibility.Collapsed;
-        //    }
-        //    else
-        //    {
-        //        timer.dispatcherTimer.Stop();
-        //        ScanOnce.Visibility = Visibility.Visible;
-        //    }
-        //}
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            MapListBoxItem.IsSelected = true;
+        }      
     }
 }

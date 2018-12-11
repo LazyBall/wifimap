@@ -14,6 +14,14 @@ namespace Wi_Fi_Map
             await InitializeFirstAdapter();
         }
 
+        public async Task ScanForNetworks()
+        {
+            if (this.WiFiAdapter != null)
+            {
+                await this.WiFiAdapter.ScanAsync();
+            }
+        }
+
         private async Task InitializeFirstAdapter()
         {
             var access = await WiFiAdapter.RequestAccessAsync();
@@ -34,20 +42,6 @@ namespace Wi_Fi_Map
                 {
                     throw new Exception("WiFi Adapter not found.");
                 }
-            }
-        }
-
-        public async Task ScanForNetworks()
-        {
-            if (this.WiFiAdapter != null)
-            {
-                var startTime = DateTime.Now;
-                await this.WiFiAdapter.ScanAsync();
-                var endTime = DateTime.Now;
-
-                var duration = endTime - startTime;
-
-                var time = duration.ToString();
             }
         }
     }
