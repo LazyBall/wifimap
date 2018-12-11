@@ -16,8 +16,7 @@
         <Maps:MapControl x:Name="MyMap" Grid.Row="0" 
                          MapServiceToken=" dKEGXhsATRR76h8Klgk5~MokPeHVLlJS-TRpScYOjpw~ArTM5cQ2FNhRYvfJJSiRWY6zk6SuoRG_mxG82HyhJtMEW-aV-uu3qR3bvZTjqCK-" 
                          MapElementClick="MyMap_MapElementClick"
-                         Style="Road"
-                         ZoomLevelChanged="MyMap_ZoomLevelChanged">
+                         Style="Road">
         </Maps:MapControl>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -48,10 +47,10 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <ComboBox x:Name="comboBoxEncryptionFilter" Width="150" >
-                                        <TextBlock Text="Ccmp"/>
-                                        <TextBlock Text="Tkip"/>
-                                        <TextBlock Text="None"/>
-                                        <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
+                                    <TextBlock Text="Ccmp"/>
+                                    <TextBlock Text="Tkip"/>
+                                    <TextBlock Text="None"/>
+                                    <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
                                 </ComboBox>
                                 <TextBlock Text="Шифрование" Grid.Column="1" FontFamily="Verdana" FontSize="16"/>
                             </Grid>
@@ -72,6 +71,6 @@
                                ToolTipService.ToolTip="Переместиться на текущее местоположение"  ToolTipService.Placement="Mouse"/>
             </Grid>
         </Grid>
-       
+
     </Grid>
 </Page>

@@ -96,14 +96,7 @@ namespace Wi_Fi_Map
             MapControl.SetLocation(img, point);
             MyMap.Children.Clear();
             MyMap.Children.Add(img);
-        }
-
-        private void MyMap_ZoomLevelChanged(Windows.UI.Xaml.Controls.Maps.MapControl sender, object args)
-        {
-            MapData mapData = MapData.GetInstance();
-            if (MyMap.ZoomLevel < 9) MyMap.ZoomLevel = 9;
-            if (MyMap.ZoomLevel > 20) MyMap.ZoomLevel = 20;           
-        }
+        }       
 
         private static BasicGeoposition CreateBasicGeoposition(double x,double y)
         {
