@@ -30,27 +30,12 @@ namespace Wi_Fi_Map
             }
         }
 
-        private void Hlink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
-        {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Agreement\Agreement.txt");
-            using (StreamReader st = new StreamReader(path, Encoding.GetEncoding(1251)))
-            {
-                ParametersTextBlockAgreement.Text = st.ReadToEnd();
-            }
-            ParametersFlyoutAgreement.ShowAt((TextBlock)ParametersTextBlockLink);
-        }
-
         private void ToogleSwitchParameters_Toggled(object sender, RoutedEventArgs e)
         {
             // если понадобится, то тут будет запоминаться значение тугла - on/off
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             // Save a setting locally on the device               
             localSettings.Values["SendingData"] = ToogleSwitchParameters.IsOn;
-        }
-
-        private void CloseFlyoutParameters_Click(object sender, RoutedEventArgs e)
-        {
-            ParametersFlyoutAgreement.Hide();
         }
     }
 }

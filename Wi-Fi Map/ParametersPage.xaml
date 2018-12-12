@@ -26,26 +26,7 @@
                 <Grid Height="10"/>
                 <TextBlock Text="Конфиденциальность" FontFamily="Verdana" FontSize="22" TextWrapping="WrapWholeWords" Margin="5,5,5,5"/>
                 <TextBlock Name="ParametersTextBlockLink" TextWrapping="WrapWholeWords" FontFamily="Verdana" Margin="5,0,0,0">
-                    <Span xml:space="preserve"><Run>Прочитайте </Run><Hyperlink x:Name="Hlink" Click="Hlink_Click">соглашение о конфиденциальности</Hyperlink></Span>
-                    <FlyoutBase.AttachedFlyout>
-                        <Flyout x:Name="ParametersFlyoutAgreement" Placement="Right">
-                            <Flyout.FlyoutPresenterStyle>
-                                <Style TargetType="FlyoutPresenter">
-                                    <Setter Property="ScrollViewer.HorizontalScrollMode"
-                                        Value="Disabled"/>
-                                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                                    <Setter Property="IsTabStop" Value="True"/>
-                                    <Setter Property="TabNavigation" Value="Cycle"/>
-                                </Style>
-                            </Flyout.FlyoutPresenterStyle>
-                            <StackPanel>
-                                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                    <TextBlock Name="ParametersTextBlockAgreement" FontFamily="Verdana" FontSize="16" TextWrapping="Wrap" Margin="5,5,5,5"/>
-                                </ScrollViewer>
-                                <Button Name="ParametersButtonCloseFlyout" FontSize="20" FontFamily="Verdana" Content="Понятно" Click="CloseFlyoutParameters_Click"/>
-                             </StackPanel>
-                        </Flyout>
-                        </FlyoutBase.AttachedFlyout>
+                    <Span xml:space="preserve"><Run>Прочитайте </Run><Hyperlink x:Name="Hlink" NavigateUri="https://sites.google.com/view/privacypolicywifimap/">соглашение о конфиденциальности</Hyperlink></Span>
                 </TextBlock>
                 <TextBlock Text="Об этом приложении" FontFamily="Verdana" FontSize="22" TextWrapping="WrapWholeWords" Margin="5,5,5,5"/>
                 <TextBlock FontFamily="Verdana" TextWrapping="WrapWholeWords" Margin="5,0,0,0">
