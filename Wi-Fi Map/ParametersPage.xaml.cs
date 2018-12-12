@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -30,7 +32,12 @@ namespace Wi_Fi_Map
 
         private void Hlink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {
-            //загрузка файла соглашения и вывод на экран
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Agreement\Agreement.txt");
+            using (StreamReader st = new StreamReader(path, Encoding.GetEncoding(1251)))
+            {
+                ParametersTextBlockAgreement.Text = st.ReadToEnd();
+            }
+            ParametersFlyoutAgreement.ShowAt((TextBlock)ParametersTextBlockLink);
         }
 
         private void ToogleSwitchParameters_Toggled(object sender, RoutedEventArgs e)
@@ -39,6 +46,11 @@ namespace Wi_Fi_Map
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             // Save a setting locally on the device               
             localSettings.Values["SendingData"] = ToogleSwitchParameters.IsOn;
+        }
+
+        private void CloseFlyoutParameters_Click(object sender, RoutedEventArgs e)
+        {
+            ParametersFlyoutAgreement.Hide();
         }
     }
 }
