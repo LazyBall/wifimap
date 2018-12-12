@@ -29,7 +29,7 @@
                     <Span xml:space="preserve"><Run>Прочитайте </Run><Hyperlink x:Name="Hlink" Click="Hlink_Click">соглашение о конфиденциальности</Hyperlink></Span>
                 </TextBlock>
                 <TextBlock Text="Об этом приложении" FontFamily="Verdana" FontSize="22" TextWrapping="WrapWholeWords" Margin="5,5,5,5"/>
-                <TextBlock Text="WIFI-Map Yaroslavl State Univetsity" FontFamily="Verdana" TextWrapping="WrapWholeWords" Margin="5,0,0,0"/>
+                <TextBlock Text="WiFi Map, Yaroslavl State Univetsity" FontFamily="Verdana" TextWrapping="WrapWholeWords" Margin="5,0,0,0"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

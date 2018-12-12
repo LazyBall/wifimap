@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Documents;
+
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,6 +16,16 @@ namespace Wi_Fi_Map
         public ParametersPage()
         {
             this.InitializeComponent();
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            try
+            {
+                ToogleSwitchParameters.IsOn = (bool)localSettings.Values["SendingData"];
+            }
+            catch
+            {
+                ToogleSwitchParameters.IsOn = true;
+                localSettings.Values["SendingData"] = true;
+            }
         }
 
         private void Hlink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
@@ -36,6 +36,9 @@ namespace Wi_Fi_Map
         private void ToogleSwitchParameters_Toggled(object sender, RoutedEventArgs e)
         {
             // если понадобится, то тут будет запоминаться значение тугла - on/off
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            // Save a setting locally on the device               
+            localSettings.Values["SendingData"] = ToogleSwitchParameters.IsOn;
         }
     }
 }
