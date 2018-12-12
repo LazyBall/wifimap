@@ -184,6 +184,17 @@ namespace Wi_Fi_Map
 
         private static async void SendDataToDatabase(IEnumerable<WiFiSignal> signals)
         {
+            bool sending;
+            try
+            {
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                sending = (bool)localSettings.Values["SendingData"];           
+            }
+            catch
+            {
+                sending = true;
+            }
+            if (!sending) return;
             try
             {
                 Geolocator geolocator = new Geolocator();
@@ -200,7 +211,7 @@ namespace Wi_Fi_Map
             }
             catch
             {
-
+                return;
             }      
         }
     }
