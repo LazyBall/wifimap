@@ -128,6 +128,7 @@
     <None Include="Wi-Fi Map_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Agreement\Agreement.txt" />
     <Content Include="Assets\circle-blue-overlay100.png" />
     <Content Include="Assets\circle-blue-overlay20.png" />
     <Content Include="Assets\circle-blue-overlay50.png" />
@@ -218,6 +219,7 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
