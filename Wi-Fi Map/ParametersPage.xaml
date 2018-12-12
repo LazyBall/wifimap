@@ -27,6 +27,13 @@
                 <TextBlock Text="Конфиденциальность" FontFamily="Verdana" FontSize="22" TextWrapping="WrapWholeWords" Margin="5,5,5,5"/>
                 <TextBlock TextWrapping="WrapWholeWords" FontFamily="Verdana" Margin="5,0,0,0">
                     <Span xml:space="preserve"><Run>Прочитайте </Run><Hyperlink x:Name="Hlink" Click="Hlink_Click">соглашение о конфиденциальности</Hyperlink></Span>
+                    <!--<TextBlock.Text>
+                        Это приложение использует информацию, полученную с устройств пользователей.
+                        Информация, отправляемая в базу данных, не содержит персональных данных.
+                        Она содержит только открытые данные о сетях, которые устройство обнаружило в конкретном 
+                        местоположении и само местоположение.
+                        Мы не собираем и не храним иную информацию.                       
+                    </TextBlock.Text>-->
                 </TextBlock>
                 <TextBlock Text="Об этом приложении" FontFamily="Verdana" FontSize="22" TextWrapping="WrapWholeWords" Margin="5,5,5,5"/>
                 <TextBlock Text="WiFi Map, Yaroslavl State Univetsity" FontFamily="Verdana" TextWrapping="WrapWholeWords" Margin="5,0,0,0"/>
