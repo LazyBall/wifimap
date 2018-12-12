@@ -17,7 +17,14 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <PackageCertificateKeyFile>Wi-Fi Map_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>Wi-Fi Map_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>833A3E1067A9D4A2D4AF32DAE9B40DB0292BDBCE</PackageCertificateThumbprint>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
+    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -125,10 +132,10 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="Wi-Fi Map_StoreKey.pfx" />
     <None Include="Wi-Fi Map_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Agreement\Agreement.txt" />
     <Content Include="Assets\circle-blue-overlay100.png" />
     <Content Include="Assets\circle-blue-overlay20.png" />
     <Content Include="Assets\circle-blue-overlay50.png" />
@@ -175,6 +182,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\wifi-circle.png" />
     <Content Include="Assets\wifi.jpg" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

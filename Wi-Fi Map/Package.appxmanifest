@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="9a70f1d8-ba42-41a9-8436-3d3cf8d87e37" Publisher="CN=infor" Version="1.0.0.0" />
-  <mp:PhoneIdentity PhoneProductId="9a70f1d8-ba42-41a9-8436-3d3cf8d87e37" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="27917PSKTeam.Wi-FiMap" Publisher="CN=F8E2BBB0-09D0-4C11-ACBF-90B7479568B1" Version="1.1.1.0" />
+  <mp:PhoneIdentity PhoneProductId="78011c40-9bde-44ea-9d3d-5a192859bfc8" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Wi-Fi Map</DisplayName>
-    <PublisherDisplayName>infor</PublisherDisplayName>
+    <PublisherDisplayName>PSKTeam</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -19,6 +19,9 @@
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png">
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#d7f3f7" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape" />
+        </uap:InitialRotationPreference>
       </uap:VisualElements>
     </Application>
   </Applications>

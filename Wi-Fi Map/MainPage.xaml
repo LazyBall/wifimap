@@ -39,9 +39,9 @@
             <RelativePanel>
                 <Button Name="SplitViewON" RelativePanel.AlignBottomWithPanel="True"  Content="&#xE700;" Click="SplitViewON_Click" Style="{StaticResource MyButtonStyle}"/>
                 <Button Name="BackButton" RelativePanel.RightOf="SplitViewON" Content="&#xE0C4;" Click="BackButton_Click" Style="{StaticResource MyButtonStyle}"/>
-                <TextBlock Name="TitleTextBlock" RelativePanel.RightOf="BackButton" FontSize="28" FontWeight="Bold" Margin="20,5,0,0" TextWrapping="Wrap"/>
+                <TextBlock Name="TitleTextBlock" RelativePanel.RightOf="BackButton" FontSize="25" FontWeight="Bold" Margin="8,5,0,0" TextWrapping="Wrap"/>
                 <Button Name="SearchButton" RelativePanel.AlignRightWithPanel="True" Content="&#xE1A3;" Click="SearchButton_Click" ToolTipService.ToolTip="Поиск по адресу"  ToolTipService.Placement="Mouse" Style="{StaticResource MyButtonStyle}"/>
-                <TextBox Name="SearchTextBox" RelativePanel.LeftOf="SearchButton" Height="48" Width="200" FontSize="24" PlaceholderText="Поиск" BorderThickness="0,0,0,0"/>
+                <TextBox Name="SearchTextBox" RelativePanel.LeftOf="SearchButton" Height="48" Width="150" FontSize="24" PlaceholderText="Поиск" BorderThickness="0,0,0,0"/>
             </RelativePanel>
             <SplitView Name="MySplitView" Grid.Row="1" DisplayMode="CompactOverlay" OpenPaneLength="250" CompactPaneLength="57" HorizontalAlignment="Stretch">
                 <SplitView.Pane>

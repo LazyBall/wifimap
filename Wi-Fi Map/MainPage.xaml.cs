@@ -10,6 +10,7 @@ using Windows.UI.ViewManagement;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Xaml.Shapes;
+using Windows.Foundation;
 
 namespace Wi_Fi_Map
 { 
@@ -18,8 +19,6 @@ namespace Wi_Fi_Map
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        Rectangle rectangle = new Rectangle();
-        
         public MainPage()
         {
             this.InitializeComponent();
