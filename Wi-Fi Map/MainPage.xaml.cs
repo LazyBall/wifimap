@@ -23,10 +23,12 @@ namespace Wi_Fi_Map
         public MainPage()
         {
             this.InitializeComponent();
-            RequestedTheme = ElementTheme.Light;
+            SetStartTheme();
+            // RequestedTheme = ElementTheme.Light;
+            //MapListBoxItem.IsSelected = true;
+            //titleBar.ButtonForegroundColor = Colors.Black;
             BackButton.Visibility = Visibility.Collapsed;
-            TitleTextBlock.Text = "Карта";
-            MapListBoxItem.IsSelected = true;
+            TitleTextBlock.Text = "Карта";          
             //MyFrame.Navigate(typeof(Map));
             // Hide default title bar.
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
@@ -47,7 +49,35 @@ namespace Wi_Fi_Map
             var titleBar = applicationView.TitleBar;
 
             titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonForegroundColor = Colors.Black;
+            
+        }
+
+        private void SetStartTheme()
+        {
+            WifiListBoxItem.IsSelected = false;
+            MapListBoxItem.IsSelected = false;
+            Theme.IsSelected = true;
+            string theme = string.Empty;
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            try
+            {
+                theme = localSettings.Values["Theme"] as string;
+            }
+            catch
+            {
+                theme = "Light";
+                localSettings.Values["Theme"] = "Light";
+            }
+            if (theme == "Dark")
+            {
+                RequestedTheme = ElementTheme.Light;
+            }
+            else
+            {
+                RequestedTheme = ElementTheme.Dark;
+            }
+            IconsListBox_SelectionChanged(new object(), null);
+            Theme.IsSelected = false;
         }
 
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
@@ -104,23 +134,23 @@ namespace Wi_Fi_Map
                 var titleBar = applicationView.TitleBar;
                 MapData mapData = MapData.GetInstance();
                 CurrentColorSchemeWifiInfo currentColorSchemeWifi = CurrentColorSchemeWifiInfo.GetInstance();
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
                 if (RequestedTheme == ElementTheme.Light)
                 {
                     RequestedTheme = ElementTheme.Dark;
                     mapData.Scheme = MapColorScheme.Dark;
                     titleBar.ButtonForegroundColor = Colors.DeepPink;
                     currentColorSchemeWifi.ChangeValues(new NightSchemeForWifiInfo());
-
+                    localSettings.Values["Theme"] = "Dark";
                 }
                 else if (RequestedTheme == ElementTheme.Dark)
                 {
                     RequestedTheme = ElementTheme.Light;
                     mapData.Scheme = MapColorScheme.Light;
                     titleBar.ButtonForegroundColor = Colors.Black;
-
                     currentColorSchemeWifi.ChangeValues(new WhiteSchemeForWifiInfo());
+                    localSettings.Values["Theme"] = "Light";
                 }
-                
                 MapListBoxItem.IsSelected = true;
             }
         }
