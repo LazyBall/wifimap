@@ -25,8 +25,8 @@ namespace Wi_Fi_Map
             }
             catch
             {
-                ToogleSwitchParameters.IsOn = true;
-                localSettings.Values["SendingData"] = true;
+                ToogleSwitchParameters.IsOn = false;
+                localSettings.Values["SendingData"] = false;
             }
         }
 

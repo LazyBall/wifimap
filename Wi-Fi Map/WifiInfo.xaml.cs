@@ -184,35 +184,42 @@ namespace Wi_Fi_Map
 
         private static async void SendDataToDatabase(IEnumerable<WiFiSignal> signals)
         {
-            bool sending;
-            try
+            if (CheckSendingSetting())
             {
-                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                sending = (bool)localSettings.Values["SendingData"];           
-            }
-            catch
-            {
-                sending = true;
-            }
-            if (!sending) return;
-            try
-            {
-                Geolocator geolocator = new Geolocator();
-                Geoposition position = await geolocator.GetGeopositionAsync();
-                double latitude = position.Coordinate.Point.Position.Latitude,
-                   longitude = position.Coordinate.Point.Position.Longitude;
-                var list = new List<WiFiSignalWithGeoposition>();
-                foreach (var signal in signals)
+                try
                 {
-                    list.Add(new WiFiSignalWithGeoposition(signal, latitude, longitude));
+                    Geolocator geolocator = new Geolocator();
+                    Geoposition position = await geolocator.GetGeopositionAsync();
+                    double latitude = position.Coordinate.Point.Position.Latitude,
+                       longitude = position.Coordinate.Point.Position.Longitude;
+                    var list = new List<WiFiSignalWithGeoposition>();
+                    foreach (var signal in signals)
+                    {
+                        list.Add(new WiFiSignalWithGeoposition(signal, latitude, longitude));
+                    }
+                    var db = new Database();
+                    db.AddSignals(list);
                 }
-                var db = new Database();
-                db.AddSignals(list);
+                catch
+                {
+                    return;
+                }
+            }
+        }
+
+        private static bool CheckSendingSetting()
+        {
+            bool sending;
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            try
+            {
+                sending = (bool)localSettings.Values["SendingData"];
             }
             catch
             {
-                return;
-            }      
+                sending = false;
+            }
+            return sending;
         }
     }
 }
