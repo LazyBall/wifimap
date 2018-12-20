@@ -12,7 +12,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
-using System.Threading.Tasks;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -33,11 +32,11 @@ namespace Wi_Fi_Map
             MyMap.ZoomLevel = 10;
             BasicGeoposition geoposition = CreateBasicGeoposition(mapData.Latitude, mapData.Longitude);
             MyMap.Center = new Geopoint(geoposition);
+            ScanOnce_Click(ScanOnce, new RoutedEventArgs());
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ScanOnce_Click(ScanOnce, new RoutedEventArgs());
             MapData mapData = MapData.GetInstance();
             if (e.Parameter is GPScoords position)
             {
@@ -137,9 +136,12 @@ namespace Wi_Fi_Map
         private void MyMap_MapElementClick(MapControl sender, MapElementClickEventArgs args)
         {
             MapIcon myClickedIcon = args.MapElements.FirstOrDefault(x => x is MapIcon) as MapIcon;
-            string Title = myClickedIcon.Title;
-            myClickedIcon.Title = myClickedIcon.Tag.ToString();
-            myClickedIcon.Tag = Title;
+            if (myClickedIcon != null)
+            {
+                string Title = myClickedIcon.Title;
+                myClickedIcon.Title = myClickedIcon.Tag.ToString();
+                myClickedIcon.Tag = Title;
+            }
         }
 
         private async void ScanOnce_Click(object sender, RoutedEventArgs e)
@@ -150,6 +152,7 @@ namespace Wi_Fi_Map
             IEnumerable<WiFiSignalWithGeoposition> signals;
             try
             {
+                if(!CheckForInternetConnection()) throw new Exception();
                 var db = new Database();
                 signals = await db.GetAllSignalsAsync();
             }
@@ -163,6 +166,22 @@ namespace Wi_Fi_Map
             mapData.AddData(signals);
             AddWifiPointsToMap(mapData);
             if (bt != null) bt.IsEnabled = true;
+        }
+
+        public static bool CheckForInternetConnection()
+        {
+            try
+            {
+                using (var client = new System.Net.WebClient())
+                {
+                    using (client.OpenRead("https://www.google.ru/"))
+                        return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

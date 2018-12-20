@@ -54,7 +54,7 @@
                             <ListBoxItem Name="WifiListBoxItem">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="&#xE701;"  Style="{StaticResource MyListTextBoxStyle1}"/>
-                                    <TextBlock Text="Список WIFI" Style="{StaticResource MyListTextBoxStyle2}"/>
+                                    <TextBlock Text="Список Wi-Fi" Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </StackPanel>
                             </ListBoxItem>
 
