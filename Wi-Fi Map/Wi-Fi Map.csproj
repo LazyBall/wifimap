@@ -132,7 +132,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="Wi-Fi Map_StoreKey.pfx" />
     <None Include="Wi-Fi Map_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -182,7 +181,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\wifi-circle.png" />
     <Content Include="Assets\wifi.jpg" />
-    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
