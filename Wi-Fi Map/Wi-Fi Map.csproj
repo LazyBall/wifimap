@@ -120,6 +120,7 @@
       <DependentUpon>ParametersPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings Classes\SendingDataSetting.cs" />
     <Compile Include="WhiteSchemeForWifiInfo.cs" />
     <Compile Include="WiFiInfo.xaml.cs">
       <DependentUpon>WiFiInfo.xaml</DependentUpon>

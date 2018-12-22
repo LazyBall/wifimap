@@ -62,10 +62,15 @@ namespace Wi_Fi_Map
             if ((comboBoxEncryptionFilter.SelectedItem as TextBlock)?. Text != "Не выбрано")
                 filteredSignals = new EncryptionFilter((comboBoxEncryptionFilter.SelectedItem as TextBlock).Text).Filtering(filteredSignals);
             var random = new Random(DateTime.Now.Millisecond);
+            double divider = 50000.0;
+            int digits = 5;
             foreach (WiFiSignalWithGeoposition el in filteredSignals)
             {
-                BasicGeoposition geopositionIcon = CreateBasicGeoposition(el.Latitude + ((random.NextDouble() - 0.5) / 7000.0),
-                    el.Longitude + ((random.NextDouble() - 0.5) / 7000.0));
+                double latitude = el.Latitude + (random.NextDouble() - 0.5) / divider;
+                latitude = Math.Round(latitude, digits);
+                double longitude = el.Longitude + (random.NextDouble() - 0.5) / divider;
+                longitude = Math.Round(longitude, digits);
+                BasicGeoposition geopositionIcon = CreateBasicGeoposition(latitude, longitude);
                 Geopoint point = new Geopoint(geopositionIcon);
                 MapIcon mapIcon = new MapIcon
                 {
@@ -73,8 +78,9 @@ namespace Wi_Fi_Map
                     Image = RandomAccessStreamReference.CreateFromUri(new Uri(filename)),
                     NormalizedAnchorPoint = new Point(0.5, 0.5),
                     Title = el.SSID,
-                    Tag = string.Join('\n', "SSID: " + el.SSID, "BSSID: " + el.BSSID, "Encryption: " + el.Encryption,
-                    "Signal Strength: " + el.SignalStrength, "Position: "+ el.Latitude + " : " + el.Longitude)               
+                    Tag = string.Join('\n', "Имя(SSID): " + el.SSID, "Mac-адрес(BSSID): " + el.BSSID,
+                    "Шифрование: " + el.Encryption, "Сила сигнала (в dBm): " + el.SignalStrength,
+                    "Местоположение (широта:долгота)", latitude + " : " + longitude)
                 };
                 MyMap.MapElements.Add(mapIcon);
             }
@@ -135,7 +141,7 @@ namespace Wi_Fi_Map
 
         private void MyMap_MapElementClick(MapControl sender, MapElementClickEventArgs args)
         {
-            MapIcon myClickedIcon = args.MapElements.FirstOrDefault(x => x is MapIcon) as MapIcon;
+            var myClickedIcon = (args.MapElements.FirstOrDefault(x => x is MapIcon) as MapIcon);
             if (myClickedIcon != null)
             {
                 string Title = myClickedIcon.Title;
