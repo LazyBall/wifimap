@@ -14,24 +14,12 @@ namespace Wi_Fi_Map
         public ParametersPage()
         {
             this.InitializeComponent();
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            try
-            {
-                ToogleSwitchParameters.IsOn = (bool)localSettings.Values["SendingData"];
-            }
-            catch
-            {
-                ToogleSwitchParameters.IsOn = false;
-                localSettings.Values["SendingData"] = false;
-            }
+            ToogleSwitchParameters.IsOn = SendingDataSetting.Instance.Value;
         }
 
         private void ToogleSwitchParameters_Toggled(object sender, RoutedEventArgs e)
         {
-            // если понадобится, то тут будет запоминаться значение тугла - on/off
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            // Save a setting locally on the device               
-            localSettings.Values["SendingData"] = ToogleSwitchParameters.IsOn;
+            SendingDataSetting.Instance.Value = ToogleSwitchParameters.IsOn;
         }
     }
 }
