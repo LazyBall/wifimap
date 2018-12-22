@@ -184,7 +184,7 @@ namespace Wi_Fi_Map
 
         private static async void SendDataToDatabase(IEnumerable<WiFiSignal> signals)
         {
-            if (CheckSendingSetting())
+            if (SendingDataSetting.Instance.Value)
             {
                 try
                 {
@@ -205,21 +205,6 @@ namespace Wi_Fi_Map
                     return;
                 }
             }
-        }
-
-        private static bool CheckSendingSetting()
-        {
-            bool sending;
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            try
-            {
-                sending = (bool)localSettings.Values["SendingData"];
-            }
-            catch
-            {
-                sending = false;
-            }
-            return sending;
-        }
+        }        
     }
 }
