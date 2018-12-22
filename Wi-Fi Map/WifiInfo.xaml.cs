@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
 using Windows.Devices.Geolocation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -37,7 +38,7 @@ namespace Wi_Fi_Map
             mainGrid.Background = colorScheme._colorSchemeForWifiInfo.GridColor;
             RefreshWifiListButton_Click(RefreshWifiListButton, new RoutedEventArgs());
         }
-          
+
         private async void RefreshWifiListButton_Click(object sender, RoutedEventArgs e)
         {
             //обработка события нажатия на кнопку обновить
@@ -53,7 +54,7 @@ namespace Wi_Fi_Map
                     await _wiFiScanner.InitializeScanner();
                 }
                 catch
-                {                    
+                {
                     var dialog = new MessageDialog("Проверьте, влючен ли Wi-Fi.");
                     await dialog.ShowAsync();
                     AddVisualInfo(new List<WiFiSignal>(0));
@@ -62,11 +63,10 @@ namespace Wi_Fi_Map
             if (_wiFiScanner.WiFiAdapter != null)
             {
                 var list = await GetWiFiSignalsData();
+                AddVisualInfo(list);
                 Thread thread = new Thread(() => SendDataToDatabase(list));
                 thread.Start();
                 //Task.Run(() => SendDataToDatabase(list)).GetAwaiter();
-
-                AddVisualInfo(list);               
             }
             if (bt != null) bt.IsEnabled = true;
             //timer.Stop();
@@ -78,10 +78,12 @@ namespace Wi_Fi_Map
         {
             CurrentColorSchemeWifiInfo colorScheme = CurrentColorSchemeWifiInfo.GetInstance();
             int count = 0;
+            // TODO: Сделать выбор разных компараторов, в зависимости от желания пользователя
+            signals = SortSignals(signals, new SSIDComparer());
             foreach (WiFiSignal s in signals)
             {
                 count++;
-                WrapPanel panel = new WrapPanel();               
+                WrapPanel panel = new WrapPanel();
                 TextBlock tbSSID = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "SSID: ");
                 TextBlock tbSignalStrength = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.NormalSignalSymbol);
                 TextBlock tbEncryption = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.EncriptionSymbol);
@@ -192,11 +194,7 @@ namespace Wi_Fi_Map
                     Geoposition position = await geolocator.GetGeopositionAsync();
                     double latitude = position.Coordinate.Point.Position.Latitude,
                        longitude = position.Coordinate.Point.Position.Longitude;
-                    var list = new List<WiFiSignalWithGeoposition>();
-                    foreach (var signal in signals)
-                    {
-                        list.Add(new WiFiSignalWithGeoposition(signal, latitude, longitude));
-                    }
+                    var list = (from signal in signals select new WiFiSignalWithGeoposition(signal, latitude, longitude));
                     var db = new Database();
                     db.AddSignals(list);
                 }
@@ -205,6 +203,37 @@ namespace Wi_Fi_Map
                     return;
                 }
             }
-        }        
+        }
+
+        private IEnumerable<WiFiSignal> SortSignals(IEnumerable<WiFiSignal> wiFiSignals, IComparer<WiFiSignal> comparer)
+        {
+            var collection = wiFiSignals.OrderBy(t => t, comparer);
+            return collection;
+        }
+
+
+        private class SSIDComparer : IComparer<WiFiSignal>
+        {
+            public int Compare(WiFiSignal x, WiFiSignal y)
+            {
+                return x.SSID.ToUpper().CompareTo(y.SSID.ToUpper());
+            }
+        }
+
+        private class SignalStrengthComparer : IComparer<WiFiSignal>
+        {
+            public int Compare(WiFiSignal x, WiFiSignal y)
+            {
+                return x.SignalStrength.CompareTo(y.SignalStrength);
+            }
+        }
+
+        private class EncryptionComparer : IComparer<WiFiSignal>
+        {
+            public int Compare(WiFiSignal x, WiFiSignal y)
+            {
+                return x.Encryption.ToUpper().CompareTo(y.Encryption.ToUpper());
+            }
+        }
     }
 }
