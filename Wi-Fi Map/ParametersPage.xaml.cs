@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 
@@ -24,6 +25,7 @@ namespace Wi_Fi_Map
                 ToogleSwitchParameters.IsOn = false;
                 localSettings.Values["SendingData"] = false;
             }
+             Toggled+= new MainPage().ChangeTheme;
         }
 
         private void ToogleSwitchParameters_Toggled(object sender, RoutedEventArgs e)
@@ -32,6 +34,14 @@ namespace Wi_Fi_Map
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             // Save a setting locally on the device               
             localSettings.Values["SendingData"] = ToogleSwitchParameters.IsOn;
+        }
+        public delegate void ToogleThemeHandler();
+        public event ToogleThemeHandler Toggled;
+
+        private void ToogleSwitchTheme_Toggled(object sender, RoutedEventArgs e)
+        {
+            //можно сделать как с туглом для соглашения, типа если выключен то это светлая тема, включен - темная и запомнить положение тугла
+            Toggled?.Invoke();
         }
     }
 }
