@@ -30,7 +30,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Button FontFamily="Segoe MDL2 Assets"  ToolTipService.ToolTip="Фильтр"  ToolTipService.Placement="Mouse" FontSize="38" Background="Transparent" BorderThickness="0,0,0,0" Content="&#xE71C;" HorizontalAlignment="Center">
+                <Button ToolTipService.ToolTip="Фильтр"  Content="&#xE71C;" Style="{StaticResource MyButtonStyleInPages}">
                     <Button.Flyout>
                         <Flyout Placement="Left">
                             <Flyout.FlyoutPresenterStyle>
@@ -44,21 +44,22 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <ComboBox x:Name="comboBoxEncryptionFilter" Width="150" >
+                                <TextBlock Text="Шифрование" FontFamily="Verdana" FontSize="16"/>
+                                <ComboBox x:Name="comboBoxEncryptionFilter"  Grid.Column="1" Width="150" >
                                     <TextBlock Text="Ccmp"/>
                                     <TextBlock Text="Tkip"/>
                                     <TextBlock Text="None"/>
                                     <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
                                 </ComboBox>
-                                <TextBlock Text="Шифрование" Grid.Column="1" FontFamily="Verdana" FontSize="16"/>
+                                <Button Content="Ok" Click="ScanOnce_Click" Grid.Row="1" BorderThickness="0,0,0,0" Background="Transparent" FontFamily="Verdana"/>
                             </Grid>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
-                <Button x:Name="ScanOnce" Click="ScanOnce_Click" Grid.Row="1" ToolTipService.ToolTip="Обновить данные"  ToolTipService.Placement="Mouse" FontFamily="Segoe MDL2 Assets" FontSize="38" Background="Transparent" BorderThickness="0,0,0,0" Content="&#xE72C;" HorizontalAlignment="Center">
-                </Button>
+                <Button x:Name="ScanOnce" Click="ScanOnce_Click" Grid.Row="1" ToolTipService.ToolTip="Обновить данные" Content="&#xE72C;" Style="{StaticResource MyButtonStyleInPages}"/>
                 <TextBlock x:Name="TextBlockPosition" 
                                Grid.Row="2"
                                Text="&#xE81D;" 
@@ -71,6 +72,5 @@
                                ToolTipService.ToolTip="Переместиться на текущее местоположение"  ToolTipService.Placement="Mouse"/>
             </Grid>
         </Grid>
-
     </Grid>
 </Page>
