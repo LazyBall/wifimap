@@ -29,6 +29,7 @@ namespace Wi_Fi_Map
         {
             this.InitializeComponent();
             this._wiFiScanner = new WiFiScanner();
+            comboBoxSort.SelectedItem = defaultTextBlock;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
