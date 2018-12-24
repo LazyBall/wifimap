@@ -24,6 +24,15 @@
                     </ToggleSwitch.OnContent>
                 </ToggleSwitch>
                 <Grid Height="10"/>
+                <TextBlock Text="Переключить тему" FontFamily="Verdana" FontSize="22" TextWrapping="WrapWholeWords" Margin="5,5,5,5"/>
+                <ToggleSwitch x:Name="ToogleSwitchTheme" FontSize="18" Margin="5,0,0,0" Toggled="ToogleSwitchTheme_Toggled">
+                    <ToggleSwitch.OffContent>
+                        <TextBlock Text="Выкл." Style="{StaticResource MyListTextBoxStyle2}"/>
+                    </ToggleSwitch.OffContent>
+                    <ToggleSwitch.OnContent>
+                        <TextBlock Text="Вкл." Style="{StaticResource MyListTextBoxStyle2}"/>
+                    </ToggleSwitch.OnContent>
+                </ToggleSwitch>
                 <TextBlock Text="Конфиденциальность" FontFamily="Verdana" FontSize="22" TextWrapping="WrapWholeWords" Margin="5,5,5,5"/>
                 <TextBlock Name="ParametersTextBlockLink" TextWrapping="WrapWholeWords" FontFamily="Verdana" Margin="5,0,0,0">
                     <Span xml:space="preserve"><Run>Прочитайте </Run><Hyperlink x:Name="Hlink" NavigateUri="https://sites.google.com/view/privacypolicywifimap/">соглашение о конфиденциальности</Hyperlink></Span>

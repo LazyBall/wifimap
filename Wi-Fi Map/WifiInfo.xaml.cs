@@ -30,6 +30,7 @@ namespace Wi_Fi_Map
         {
             this.InitializeComponent();
             this._wiFiScanner = new WiFiScanner();
+            comboBoxSort.SelectedItem = defaultTextBlock;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -86,7 +87,7 @@ namespace Wi_Fi_Map
                 WrapPanel panel = new WrapPanel();
                 TextBlock tbSSID = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "SSID: ");
                 TextBlock tbSignalStrength = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.NormalSignalSymbol);
-                TextBlock tbEncryption = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.EncriptionSymbol);
+                TextBlock tbEncryption = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.CloseEncryptionSymbol);
                 TextBlock tbMAC = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "BSSID:");
                 TextBlock tbSSIDValue = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SSID);
                 TextBlock tbSignalStrengthValue = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SignalStrength);

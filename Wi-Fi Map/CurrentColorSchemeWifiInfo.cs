@@ -14,10 +14,11 @@ namespace Wi_Fi_Map
         public int TextBlockLineHeight { get; set; } = 21;
         public int TextBlockSymbolFontSize { get; set; } = 30;
         public int TextBlockFontSize { get; set; } = 20;
+        public string CloseEncryptionSymbol { get; set; } = "\xE72E";
+        public string OpenEncryptionSymbol { get; set; } = "\xE785";
         public string BadSignalSymbol { get; set; } = "\xEC3D";
         public string NormalSignalSymbol { get; set; } = "\xEC3E";
         public string GoodSignalSymbol { get; set; } = "\xEC3F";
-        public string EncriptionSymbol { get; set; } = "\xE785";
         public string PositionSymbol { get; set; } = "\xE1C4";
         public string SymbolFontFamily { get; set; } = "Segoe MDL2 Assets";
         public string FontFamily { get; set; } = "Verdana";

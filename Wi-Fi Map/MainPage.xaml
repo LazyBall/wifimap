@@ -72,10 +72,10 @@
                             </StackPanel>
                         </ListBoxItem>-->
 
-                            <ListBoxItem Name="Theme" >
+                            <ListBoxItem Name="Parameters" >
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="&#xE708;"  Style="{StaticResource MyListTextBoxStyle1}"/>
-                                    <TextBlock Text="Тема"     Style="{StaticResource MyListTextBoxStyle2}"/>
+                                    <TextBlock Text="&#xE713;"  Style="{StaticResource MyListTextBoxStyle1}"/>
+                                    <TextBlock Text="Параметры"     Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </StackPanel>
                             </ListBoxItem>
                         </ListBox>
@@ -88,17 +88,17 @@
                             </ListBoxItem>
                         </ListBox>-->
 
-                        <StackPanel VerticalAlignment="Bottom">
+                        <!--<StackPanel VerticalAlignment="Bottom">
                             <Button  Name="ParametrsButton" Content="&#xE713;" Click="ParametersButton_Click" FontFamily="Segoe MDL2 Assets" FontSize="41" ToolTipService.ToolTip="Параметры"  ToolTipService.Placement="Mouse" Background="Transparent" BorderThickness="0,0,0,0" />
-                            <!--<ToggleSwitch x:Name="ToogleSwitch" Margin="5,0,0,0" Toggled="ToggleSwitch_Toggled">
+                            --><!--<ToggleSwitch x:Name="ToogleSwitch" Margin="5,0,0,0" Toggled="ToggleSwitch_Toggled">
                                 <ToggleSwitch.OffContent>
                                     <TextBlock Text="Scan off" Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </ToggleSwitch.OffContent>
                                 <ToggleSwitch.OnContent>
                                     <TextBlock Text="Scan on" Style="{StaticResource MyListTextBoxStyle2}"/>
                                 </ToggleSwitch.OnContent>
-                            </ToggleSwitch>-->
-                        </StackPanel>
+                            </ToggleSwitch>--><!--
+                        </StackPanel>-->
                     </Grid>
                 </SplitView.Pane>
                 <SplitView.Content>

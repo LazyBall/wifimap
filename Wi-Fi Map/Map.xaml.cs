@@ -12,6 +12,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -33,6 +35,8 @@ namespace Wi_Fi_Map
             BasicGeoposition geoposition = CreateBasicGeoposition(mapData.Latitude, mapData.Longitude);
             MyMap.Center = new Geopoint(geoposition);
             ScanOnce_Click(ScanOnce, new RoutedEventArgs());
+
+            GridInfoOnePoint.Visibility = Visibility.Collapsed;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -141,13 +145,19 @@ namespace Wi_Fi_Map
 
         private void MyMap_MapElementClick(MapControl sender, MapElementClickEventArgs args)
         {
-            var myClickedIcon = (args.MapElements.FirstOrDefault(x => x is MapIcon) as MapIcon);
-            if (myClickedIcon != null)
+            //InfoOnePoint.Children.Clear();
+            if (args.MapElements.FirstOrDefault(x => x is MapIcon) is MapIcon myClickedIcon)
             {
-                string Title = myClickedIcon.Title;
-                myClickedIcon.Title = myClickedIcon.Tag.ToString();
-                myClickedIcon.Tag = Title;
+                InfoOnePoint.Text = myClickedIcon.Tag.ToString();
+                //InfoOnePoint.Children.Add(textBlock);
             }
+            GridInfoOnePoint.Visibility = Visibility.Visible;
+            //if (myClickedIcon != null)
+            //{
+            //    string Title = myClickedIcon.Title;
+            //    myClickedIcon.Title = myClickedIcon.Tag.ToString();
+            //    myClickedIcon.Tag = Title;
+            //}
         }
 
         private async void ScanOnce_Click(object sender, RoutedEventArgs e)
@@ -188,6 +198,11 @@ namespace Wi_Fi_Map
             {
                 return false;
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            GridInfoOnePoint.Visibility = Visibility.Collapsed;
         }
     }
 }
