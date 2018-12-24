@@ -25,6 +25,10 @@
             <Setter Property="ToolTipService.Placement" Value="Mouse"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
+        <Style TargetType="Button" x:Key="MyButtonStyleSmall">
+            <Setter Property="BorderThickness" Value="0,0,0,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
     </Application.Resources>
 
 </Application>

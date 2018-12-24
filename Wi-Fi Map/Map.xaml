@@ -20,10 +20,19 @@
         </Maps:MapControl>
         <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="1" >
+            <Grid x:Name="GridInfoOnePoint" Grid.Column="0" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Button  Content="&#xE8BB;" Click="Button_Click" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Right" Style="{StaticResource MyButtonStyleSmall}"/>
+                <TextBlock Name="InfoOnePoint" FontFamily="Verdana" Grid.Row="1" Margin="3,3,3,3"/>
+            </Grid>
+            <Grid Grid.Column="2" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -47,14 +56,14 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="Шифрование" FontFamily="Verdana" FontSize="16"/>
-                                <ComboBox x:Name="comboBoxEncryptionFilter"  Grid.Column="1" Width="150" >
+                                <TextBlock Text="Шифрование" FontFamily="Verdana" FontSize="16" Margin="3,3,3,3"/>
+                                <ComboBox x:Name="comboBoxEncryptionFilter"  Grid.Column="1" Width="150" BorderThickness="0,0,0,0" >
                                     <TextBlock Text="Ccmp"/>
                                     <TextBlock Text="Tkip"/>
                                     <TextBlock Text="None"/>
                                     <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
                                 </ComboBox>
-                                <Button Content="Ok" Click="ScanOnce_Click" Grid.Row="1" BorderThickness="0,0,0,0" Background="Transparent" FontFamily="Verdana"/>
+                                <Button Content="Ok" Click="ScanOnce_Click" Grid.Row="1" FontFamily="Verdana" Style="{StaticResource MyButtonStyleSmall}"/>
                             </Grid>
                         </Flyout>
                     </Button.Flyout>
@@ -74,3 +83,4 @@
         </Grid>
     </Grid>
 </Page>
+    

@@ -161,24 +161,47 @@ namespace Wi_Fi_Map
                 };
                 Geopoint hintPoint = new Geopoint(queryHint);
                 MapLocationFinderResult result =
-                      await MapLocationFinder.FindLocationsAsync(addressToGeocode, hintPoint, 3);
+                      await MapLocationFinder.FindLocationsAsync(addressToGeocode, hintPoint, 5);
                 if (result.Status == MapLocationFinderStatus.Success)
                 {
-                    try
+                    if (result.Locations.Count > 1)
                     {
-                        mapData.Latitude = result.Locations[0].Point.Position.Latitude;
-                        mapData.Longitude = result.Locations[0].Point.Position.Longitude;
-                    }
-                    catch (ArgumentOutOfRangeException)
-                    {
-                        MessageDialog md = new MessageDialog("По вашему запросу ничего не найдено!");
+                        string message = string.Empty;
+                        foreach(var i in result.Locations)
+                        {
+                            message += i.DisplayName + "\n";
+                        }
+                        MessageDialog md = new MessageDialog(message + "\nУточните адрес и попробуйте еще раз!");
                         await md.ShowAsync();
                     }
-                    MyFrame.Navigate(typeof(Map), mapData);
+                    else
+                    {
+                        try
+                        {
+                            mapData.Latitude = result.Locations[0].Point.Position.Latitude;
+                            mapData.Longitude = result.Locations[0].Point.Position.Longitude;
+                        }
+                        catch (ArgumentOutOfRangeException)
+                        {
+                            MessageDialog md = new MessageDialog("По вашему запросу ничего не найдено!");
+                            await md.ShowAsync();
+                        }
+                        MyFrame.Navigate(typeof(Map), mapData);
+                    }
+                }
+                else if( result.Status==MapLocationFinderStatus.NetworkFailure)
+                {
+                    MessageDialog md = new MessageDialog("Проверьте наличие доступа в сеть.");
+                    await md.ShowAsync();
+                }
+                else if( result.Status==MapLocationFinderStatus.BadLocation)
+                {
+                    MessageDialog md = new MessageDialog("Указанную точку нельзя преобразовать в расположение. Попробуйте другой адрес!");
+                    await md.ShowAsync();
                 }
                 else
                 {
-                    MessageDialog md = new MessageDialog("Ничего не найдено! \nПопробуйте еще раз!");
+                    MessageDialog md = new MessageDialog("Ничего не найдено. Попробуйте еще раз!");
                     await md.ShowAsync();
                 }
                 this.SearchTextBox.Text = "";

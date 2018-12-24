@@ -24,7 +24,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Button ToolTipService.ToolTip="Отсортировать" Content="&#xE71C;" Style="{StaticResource MyButtonStyleInPages}">
+                <Button ToolTipService.ToolTip="Отсортировать" Content="&#xE8CB;" Style="{StaticResource MyButtonStyleInPages}">
                     <Button.Flyout>
                         <Flyout Placement="Left">
                             <Flyout.FlyoutPresenterStyle>
@@ -41,14 +41,14 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="Сортировать по " Grid.Column="0" FontFamily="Verdana" FontSize="16"/>
-                                <ComboBox x:Name="comboBoxEncryptionFilter" Width="150" Grid.Column="1" >
+                                <TextBlock Text="Сортировать по " Grid.Column="0" FontFamily="Verdana" FontSize="16" Margin="3,3,3,3"/>
+                                <ComboBox x:Name="comboBoxSort" Width="150" Grid.Column="1" BorderThickness="0,0,0,0">
                                     <TextBlock Text="Имени"/>
                                     <TextBlock Text="Открытости"/>
                                     <TextBlock Text="Силе сигнала"/>
                                     <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
                                 </ComboBox>
-                                <Button Content="Ok" Click="RefreshWifiListButton_Click" Grid.Row="1" BorderThickness="0,0,0,0" Background="Transparent" FontFamily="Verdana"/>
+                                <Button Content="Ok" Click="RefreshWifiListButton_Click" Grid.Row="1" FontFamily="Verdana" Style="{StaticResource MyButtonStyleSmall}"/>
                             </Grid>
                         </Flyout>
                     </Button.Flyout>
