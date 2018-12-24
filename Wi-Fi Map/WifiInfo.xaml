@@ -8,18 +8,72 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid x:Name="mainGrid">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="stackPanelInfo"/>
+            </ScrollViewer>
+            <Grid Grid.Column="1" >
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <StackPanel x:Name="stackPanelInfo"/>
-                <RelativePanel Grid.Row="1">
-                    <Button Name="RefreshWifiListButton" FontSize="20" FontFamily="Verdana" RelativePanel.AlignLeftWithPanel="True"  Content="Обновить" Click="RefreshWifiListButton_Click"  ToolTipService.ToolTip="Обновить список WIFI"  ToolTipService.Placement="Mouse"/>
-                </RelativePanel>
+
+                <Button ToolTipService.ToolTip="Отсортировать" Content="&#xE8CB;" Style="{StaticResource MyButtonStyleInPages}">
+                    <Button.Flyout>
+                        <Flyout Placement="Left">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="Background" Value="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Сортировать по " Grid.Column="0" FontFamily="Verdana" FontSize="16" Margin="3,3,3,3"/>
+                                <ComboBox x:Name="comboBoxSort" Width="150" Grid.Column="1" BorderThickness="0,0,0,0">
+                                    <TextBlock Text="Имени"/>
+                                    <TextBlock Text="Открытости"/>
+                                    <TextBlock Text="Силе сигнала"/>
+                                    <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
+                                </ComboBox>
+                                <Button Content="Ok" Click="RefreshWifiListButton_Click" Grid.Row="1" FontFamily="Verdana" Style="{StaticResource MyButtonStyleSmall}"/>
+                            </Grid>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button x:Name="RefreshWifiListButton" Click="RefreshWifiListButton_Click" Grid.Row="1" ToolTipService.ToolTip="Обновить список" Content="&#xE72C;" Style="{StaticResource MyButtonStyleInPages}"/>
+                <Button x:Name="WifiInformationButton" Grid.Row="2" ToolTipService.ToolTip="Информация" Content="&#xE946;" VerticalAlignment="Bottom" Style="{StaticResource MyButtonStyleInPages}">
+                    <Button.Flyout>
+                        <Flyout Placement="Left">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="Background" Value="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <StackPanel>
+                                <TextBlock Text="SSID - имя сети"/>
+                                <TextBlock Text="Значок wifi и последующая цифра - уровень сигнала"/>
+                                <TextBlock Text="Значок замка показывает открыта сеть или нет"/>
+                                <TextBlock Text="Ccmp, Tkip, None - тип шифрования"/>
+                                <TextBlock Text="BSSID - уникальный MAC адрес"/>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
             </Grid>
-        </ScrollViewer>
+        </Grid>
         <!--<TextBlock x:Name="txbReport" Margin="5,5,5,5" TextWrapping="Wrap"  ScrollViewer.VerticalScrollBarVisibility="Auto"  LineHeight="24"
                  FontSize="20" FontFamily="Verdana" FontStretch="Normal" FontStyle="Normal" ></TextBlock>-->
     </Grid>
