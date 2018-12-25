@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 namespace Wi_Fi_Map
 {
 
-    public sealed class Database
+    sealed class Database
     {
         // Единственные заполняемые данные для подключения к базе данных
         private static readonly string _dataTable = "WiFi";
@@ -22,7 +21,7 @@ namespace Wi_Fi_Map
 
         public Database()
         {
-            
+
         }
 
         public void AddSignal(WiFiSignalWithGeoposition wiFiSignal)
@@ -31,10 +30,10 @@ namespace Wi_Fi_Map
             arr[0] = wiFiSignal;
             AddSignals(arr);
         }
-      
+
         public void AddSignals(IEnumerable<WiFiSignalWithGeoposition> wiFiSignals)
         {
-            // название процедуры
+            // название хранимой процедуры
             string sqlExpression = "InsertWiFi";
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -52,8 +51,8 @@ namespace Wi_Fi_Map
                     command.ExecuteNonQuery();
                 }
             }
-        }  
-        
+        }
+
         private SqlCommand AddParameters(SqlCommand command, WiFiSignalWithGeoposition signal)
         {
             command.Parameters.AddWithValue("@bssid", signal.BSSID);
@@ -93,7 +92,7 @@ namespace Wi_Fi_Map
                             yield return wifiSignal;
                         }
                     }
-                }      
+                }
             }
         }
 

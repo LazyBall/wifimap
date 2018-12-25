@@ -1,18 +1,16 @@
-﻿using System.Collections.Generic;
+﻿
 
 namespace Wi_Fi_Map
 {
     public class GPScoords
     {
         private static GPScoords _uniqueGPS;
-        public double Lat { get; set; } 
-        public double Lon { get; set; }
-        public IEnumerable<WiFiSignal> _signalsAround;
+        public double Latitude { get; set; } 
+        public double Longitude { get; set; }
         private GPScoords()
         {
-            Lat = -1;
-            Lon = -1;
-            _signalsAround = new List<WiFiSignal>();
+            Latitude = -1;
+            Longitude = -1;
         }
         public static GPScoords GetInstance()
         {

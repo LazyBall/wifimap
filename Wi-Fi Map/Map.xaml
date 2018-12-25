@@ -63,7 +63,7 @@
                                     <TextBlock Text="None"/>
                                     <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
                                 </ComboBox>
-                                <Button Content="Ok" Click="ScanOnce_Click" Grid.Row="1" FontFamily="Verdana" Style="{StaticResource MyButtonStyleSmall}"/>
+                                <Button Content="Ок" Click="ScanOnce_Click" Grid.Row="1" FontFamily="Verdana" Style="{StaticResource MyButtonStyleSmall}"/>
                             </Grid>
                         </Flyout>
                     </Button.Flyout>

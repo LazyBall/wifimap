@@ -3,26 +3,26 @@ using Windows.Storage;
 
 namespace Wi_Fi_Map
 {
-    sealed class SendingDataSetting
+    sealed class ThemeSetting
     {
-        private static readonly Lazy<SendingDataSetting> _setting =
-            new Lazy<SendingDataSetting>(() => new SendingDataSetting());
+        private static readonly Lazy<ThemeSetting> _setting =
+            new Lazy<ThemeSetting>(() => new ThemeSetting());
 
         private readonly ApplicationDataContainer _localContainer;
         private readonly string _key;
 
-        private SendingDataSetting()
+        private ThemeSetting()
         {
             _localContainer = ApplicationData.Current.LocalSettings;
-            _key = "SendingData";
+            _key = "Theme";
         }
 
-        public static SendingDataSetting Instance
+        public static ThemeSetting Instance
         {
             get { return _setting.Value; }
         }
 
-        public bool DataIsSent
+        public bool ThemeIsDark
         {
             get
             {
@@ -33,7 +33,7 @@ namespace Wi_Fi_Map
                 }
                 catch
                 {
-                    this.DataIsSent = value;
+                    this.ThemeIsDark = value;
                 }
                 return value;
             }

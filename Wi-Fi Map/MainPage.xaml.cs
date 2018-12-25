@@ -19,13 +19,10 @@ namespace Wi_Fi_Map
         public MainPage()
         {
             this.InitializeComponent();
+            ParametersPage.Toggled += ChangeTheme;
             SetStartTheme();
-            // RequestedTheme = ElementTheme.Light;
-            //MapListBoxItem.IsSelected = true;
-            //titleBar.ButtonForegroundColor = Colors.Black;
             BackButton.Visibility = Visibility.Collapsed;
             TitleTextBlock.Text = "Карта";          
-            //MyFrame.Navigate(typeof(Map));
             // Hide default title bar.
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
@@ -48,32 +45,38 @@ namespace Wi_Fi_Map
             
         }
 
+        private void ChangeTheme(bool doDarkTheme)
+        {
+            var applicationView = ApplicationView.GetForCurrentView();
+            var titleBar = applicationView.TitleBar;
+            MapData mapData = MapData.GetInstance();
+            CurrentColorSchemeWifiInfo currentColorSchemeWifi = CurrentColorSchemeWifiInfo.GetInstance();
+            if (doDarkTheme)
+            {
+                RequestedTheme = ElementTheme.Dark;
+                mapData.Scheme = MapColorScheme.Dark;
+                titleBar.ButtonForegroundColor = Colors.DeepPink;
+                currentColorSchemeWifi.ChangeValues(new NightSchemeForWifiInfo());
+            }
+            else
+            {
+                RequestedTheme = ElementTheme.Light;
+                mapData.Scheme = MapColorScheme.Light;
+                titleBar.ButtonForegroundColor = Colors.Black;
+                currentColorSchemeWifi.ChangeValues(new WhiteSchemeForWifiInfo());
+            }
+        }
+
         private void SetStartTheme()
         {
             WifiListBoxItem.IsSelected = false;
             MapListBoxItem.IsSelected = false;
-            //Theme.IsSelected = true;
-            string theme = string.Empty;
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            try
+            bool doDarkTheme = false;
+            if (ThemeSetting.Instance.ThemeIsDark)
             {
-                theme = localSettings.Values["Theme"] as string;
+                doDarkTheme = true;
             }
-            catch
-            {
-                theme = "Light";
-                localSettings.Values["Theme"] = "Light";
-            }
-            if (theme == "Dark")
-            {
-                RequestedTheme = ElementTheme.Light;
-            }
-            else
-            {
-                RequestedTheme = ElementTheme.Dark;
-            }
-            IconsListBox_SelectionChanged(new object(), null);
-            //Theme.IsSelected = false;
+            ChangeTheme(doDarkTheme);
         }
 
         private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
@@ -167,7 +170,7 @@ namespace Wi_Fi_Map
                     if (result.Locations.Count > 1)
                     {
                         string message = string.Empty;
-                        foreach(var i in result.Locations)
+                        foreach (var i in result.Locations)
                         {
                             message += i.DisplayName + "\n";
                         }
@@ -189,12 +192,12 @@ namespace Wi_Fi_Map
                         MyFrame.Navigate(typeof(Map), mapData);
                     }
                 }
-                else if( result.Status==MapLocationFinderStatus.NetworkFailure)
+                else if (result.Status == MapLocationFinderStatus.NetworkFailure)
                 {
                     MessageDialog md = new MessageDialog("Проверьте наличие доступа в сеть.");
                     await md.ShowAsync();
                 }
-                else if( result.Status==MapLocationFinderStatus.BadLocation)
+                else if (result.Status == MapLocationFinderStatus.BadLocation)
                 {
                     MessageDialog md = new MessageDialog("Указанную точку нельзя преобразовать в расположение. Попробуйте другой адрес!");
                     await md.ShowAsync();
@@ -205,36 +208,12 @@ namespace Wi_Fi_Map
                     await md.ShowAsync();
                 }
                 this.SearchTextBox.Text = "";
-            } 
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MapListBoxItem.IsSelected = true;
-        }   
-        public void ChangeTheme()
-        {
-            var applicationView = ApplicationView.GetForCurrentView();
-            var titleBar = applicationView.TitleBar;
-            MapData mapData = MapData.GetInstance();
-            CurrentColorSchemeWifiInfo currentColorSchemeWifi = CurrentColorSchemeWifiInfo.GetInstance();
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            if (RequestedTheme == ElementTheme.Light)
-            {
-                RequestedTheme = ElementTheme.Dark;
-                mapData.Scheme = MapColorScheme.Dark;
-                titleBar.ButtonForegroundColor = Colors.DeepPink;
-                currentColorSchemeWifi.ChangeValues(new NightSchemeForWifiInfo());
-                localSettings.Values["Theme"] = "Dark";
-            }
-            else if (RequestedTheme == ElementTheme.Dark)
-            {
-                RequestedTheme = ElementTheme.Light;
-                mapData.Scheme = MapColorScheme.Light;
-                titleBar.ButtonForegroundColor = Colors.Black;
-                currentColorSchemeWifi.ChangeValues(new WhiteSchemeForWifiInfo());
-                localSettings.Values["Theme"] = "Light";
-            }
-        }
+        }                
     }
 }

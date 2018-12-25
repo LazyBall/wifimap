@@ -23,6 +23,5 @@ namespace Wi_Fi_Map
             Latitude = latitude;
             Longitude = longitude;
         }
-
     }
 }

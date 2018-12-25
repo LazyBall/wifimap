@@ -10,7 +10,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using System.Diagnostics;
+//using System.Diagnostics;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -80,7 +80,8 @@ namespace Wi_Fi_Map
             CurrentColorSchemeWifiInfo colorScheme = CurrentColorSchemeWifiInfo.GetInstance();
             int count = 0;
             // TODO: Сделать выбор разных компараторов, в зависимости от желания пользователя
-            signals = SortSignals(signals, new SSIDComparer());
+            var comparer = GetComparer((comboBoxSort.SelectedItem as TextBlock)?.Text);
+            signals = SortSignals(signals, comparer);
             foreach (WiFiSignal s in signals)
             {
                 count++;
@@ -187,7 +188,7 @@ namespace Wi_Fi_Map
 
         private static async void SendDataToDatabase(IEnumerable<WiFiSignal> signals)
         {
-            if (SendingDataSetting.Instance.Value)
+            if (SendingDataSetting.Instance.DataIsSent)
             {
                 try
                 {
@@ -225,7 +226,7 @@ namespace Wi_Fi_Map
         {
             public int Compare(WiFiSignal x, WiFiSignal y)
             {
-                return x.SignalStrength.CompareTo(y.SignalStrength);
+                return -x.SignalStrength.CompareTo(y.SignalStrength);
             }
         }
 
@@ -234,6 +235,19 @@ namespace Wi_Fi_Map
             public int Compare(WiFiSignal x, WiFiSignal y)
             {
                 return x.Encryption.ToUpper().CompareTo(y.Encryption.ToUpper());
+            }
+        }
+
+        private IComparer<WiFiSignal> GetComparer(string text)
+        {
+            switch(text)
+            {
+                case ("Шифрованию"):
+                    return new EncryptionComparer();
+                case ("Силе сигнала"):
+                    return new SignalStrengthComparer();
+                default:
+                    return new SSIDComparer();                
             }
         }
     }
