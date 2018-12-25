@@ -4,6 +4,6 @@ namespace Wi_Fi_Map
 {
     public interface IFilter
     {
-        List<WiFiSignalWithGeoposition> Filtering(List<WiFiSignalWithGeoposition> wiFiSignals);
+        IEnumerable<WiFiSignalWithGeoposition> Filtering(IEnumerable<WiFiSignalWithGeoposition> wiFiSignals);
     }
 }

@@ -12,8 +12,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -44,7 +42,7 @@ namespace Wi_Fi_Map
             MapData mapData = MapData.GetInstance();
             if (e.Parameter is GPScoords position)
             {
-                BasicGeoposition geoposition = CreateBasicGeoposition(position.Lat, position.Lon);
+                BasicGeoposition geoposition = CreateBasicGeoposition(position.Latitude, position.Longitude);
                 ShowOnMapPosition(geoposition);
                 AddWifiPointsToMap(mapData);
             }
@@ -61,12 +59,12 @@ namespace Wi_Fi_Map
             MyMap.MapElements.Clear();
             string filename = "ms-appx:///Assets/region.png";
 
-            List<WiFiSignalWithGeoposition> filteredSignals = mapData._signals;
+            IEnumerable<WiFiSignalWithGeoposition> filteredSignals = mapData._signals;
 
             if ((comboBoxEncryptionFilter.SelectedItem as TextBlock)?. Text != "Не выбрано")
                 filteredSignals = new EncryptionFilter((comboBoxEncryptionFilter.SelectedItem as TextBlock).Text).Filtering(filteredSignals);
             var random = new Random(DateTime.Now.Millisecond);
-            double divider = 50000.0;
+            double divider = 25000.0;
             int digits = 5;
             foreach (WiFiSignalWithGeoposition el in filteredSignals)
             {
@@ -126,8 +124,8 @@ namespace Wi_Fi_Map
             {
                 Geolocator geolocator = new Geolocator();
                 Geoposition position = await geolocator.GetGeopositionAsync();
-                gps.Lat = position.Coordinate.Point.Position.Latitude;
-                gps.Lon = position.Coordinate.Point.Position.Longitude;
+                gps.Latitude = position.Coordinate.Point.Position.Latitude;
+                gps.Longitude = position.Coordinate.Point.Position.Longitude;
             }
             catch
             {
@@ -135,9 +133,9 @@ namespace Wi_Fi_Map
                 await md.ShowAsync();
             }
 
-            if (gps.Lat != -1 && gps.Lon != -1)
+            if (gps.Latitude != -1 && gps.Longitude != -1)
             {
-                BasicGeoposition geoposition = CreateBasicGeoposition(gps.Lat, gps.Lon);
+                BasicGeoposition geoposition = CreateBasicGeoposition(gps.Latitude, gps.Longitude);
                 ShowOnMapPosition(geoposition);
             }
             if (bt != null) bt.IsEnabled = true;

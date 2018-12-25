@@ -4,16 +4,18 @@ namespace Wi_Fi_Map
 {
     public class EncryptionFilter : IFilter
     {
-        public string _type { get; set; } = "None";
-        public EncryptionFilter(string s) { _type = s; }
-        public List<WiFiSignalWithGeoposition> Filtering(List<WiFiSignalWithGeoposition> wiFiSignals)
+        public string Encryption { get; set; }
+        public EncryptionFilter(string encryption)
         {
-            List<WiFiSignalWithGeoposition> filteredSignals = new List<WiFiSignalWithGeoposition>();
-            foreach(WiFiSignalWithGeoposition el in wiFiSignals)
+            this.Encryption = encryption;
+        }
+        public IEnumerable<WiFiSignalWithGeoposition> Filtering(IEnumerable<WiFiSignalWithGeoposition> wiFiSignals)
+        {
+            foreach (WiFiSignalWithGeoposition el in wiFiSignals)
             {
-                if (el.Encryption.ToLower() == _type.ToLower()) filteredSignals.Add(el);
+                if (el.Encryption.ToUpper() == Encryption.ToUpper())
+                    yield return el;
             }
-            return filteredSignals;
         }
     }
 }

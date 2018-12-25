@@ -1,7 +1,5 @@
-﻿using System;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -10,26 +8,31 @@ namespace Wi_Fi_Map
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
-    public sealed partial class ParametersPage : Page
+    sealed partial class ParametersPage : Page
     {
+        public delegate void ToogleThemeHandler(bool doDarkTheme);
+        public static event ToogleThemeHandler Toggled;
+
         public ParametersPage()
         {
             this.InitializeComponent();
-            ToogleSwitchParameters.IsOn = SendingDataSetting.Instance.Value;
-             Toggled+= new MainPage().ChangeTheme;
+            ToogleSwitchSendingData.IsOn = SendingDataSetting.Instance.DataIsSent;
+            ToogleSwitchDarkTheme.IsOn = ThemeSetting.Instance.ThemeIsDark;
         }
 
-        private void ToogleSwitchParameters_Toggled(object sender, RoutedEventArgs e)
+        private void ToogleSwitchSendingData_Toggled(object sender, RoutedEventArgs e)
         {
-            SendingDataSetting.Instance.Value = ToogleSwitchParameters.IsOn;
+            ToogleSwitchSendingData.IsEnabled = false;
+            SendingDataSetting.Instance.DataIsSent = ToogleSwitchSendingData.IsOn;
+            ToogleSwitchSendingData.IsEnabled = true;
         }
-        public delegate void ToogleThemeHandler();
-        public event ToogleThemeHandler Toggled;
-
-        private void ToogleSwitchTheme_Toggled(object sender, RoutedEventArgs e)
-        {
-            //можно сделать как с туглом для соглашения, типа если выключен то это светлая тема, включен - темная и запомнить положение тугла
-            Toggled?.Invoke();
+       
+        private void ToogleSwitchDarkTheme_Toggled(object sender, RoutedEventArgs e)
+        {                    
+            ToogleSwitchDarkTheme.IsEnabled = false;
+            ThemeSetting.Instance.ThemeIsDark = ToogleSwitchDarkTheme.IsOn;
+            Toggled?.Invoke(ToogleSwitchDarkTheme.IsOn);                    
+            ToogleSwitchDarkTheme.IsEnabled = true;
         }
     }
 }
