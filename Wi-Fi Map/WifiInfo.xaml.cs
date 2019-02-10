@@ -88,7 +88,12 @@ namespace Wi_Fi_Map
                 WrapPanel panel = new WrapPanel();
                 TextBlock tbSSID = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "SSID: ");
                 TextBlock tbSignalStrength = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.NormalSignalSymbol);
-                TextBlock tbEncryption = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, colorScheme.CloseEncryptionSymbol);
+                string encryptionSymbol = colorScheme.OpenEncryptionSymbol;
+                if(s.Encryption!=null && s.Encryption!="None")
+                {
+                    encryptionSymbol = colorScheme.CloseEncryptionSymbol;
+                }
+                TextBlock tbEncryption = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockSymbolFontSize, colorScheme.SymbolFontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, encryptionSymbol);
                 TextBlock tbMAC = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.NameForeground, "BSSID:");
                 TextBlock tbSSIDValue = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SSID);
                 TextBlock tbSignalStrengthValue = GetTextBlockInFormat(colorScheme.TextBlockLineHeight, colorScheme.TextBlockFontSize, colorScheme.FontFamily, colorScheme._colorSchemeForWifiInfo.ValueForeground, " " + s.SignalStrength);
