@@ -9,11 +9,6 @@ namespace Wi_Fi_Map
 
         public double Longitude { get; set; }
 
-        public WiFiSignalWithGeoposition()
-        {
-
-        }
-
         public WiFiSignalWithGeoposition(WiFiSignal signal, double latitude, double longitude)
         {
             BSSID = signal.BSSID;
