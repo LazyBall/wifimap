@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
 
 namespace WCFService
 {
@@ -12,17 +8,19 @@ namespace WCFService
     [ServiceContract]
     public interface IWiFiMapDataService
     {
+
         // TODO: Добавьте здесь операции служб
 
         [OperationContract]
         IEnumerable<WiFiSignalWithGeoposition> GetData();
 
-        [OperationContract]
+        [OperationContract (IsOneWay = true)]
         void SendData(IEnumerable<WiFiSignalWithGeoposition> signals);
     }
 
 
     // Используйте контракт данных, как показано в примере ниже, чтобы добавить составные типы к операциям служб.
+    
     [DataContract]
     public class WiFiSignalWithGeoposition
     {
@@ -43,5 +41,10 @@ namespace WCFService
 
         [DataMember]
         public double Longitude { get; set; }
-    }    
+
+        public WiFiSignalWithGeoposition()
+        {
+
+        }
+    }
 }
