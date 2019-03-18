@@ -6,6 +6,8 @@
     xmlns:local="using:Wi_Fi_Map"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:map_mvvm="using:Wi_Fi_Map.Map_MVVM"
+    xmlns:geolocation="using:Windows.Devices.Geolocation"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     NavigationCacheMode="Required">
@@ -13,33 +15,58 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <Maps:MapControl x:Name="MyMap" Grid.Row="0" 
                          MapServiceToken=" dKEGXhsATRR76h8Klgk5~MokPeHVLlJS-TRpScYOjpw~ArTM5cQ2FNhRYvfJJSiRWY6zk6SuoRG_mxG82HyhJtMEW-aV-uu3qR3bvZTjqCK-" 
-                         MapElementClick="MyMap_MapElementClick"
-                         Style="Road">
+                         MapElementClick="MyMap_MapElementClick" 
+                         ColorScheme="{Binding SetColorScheme}" 
+                         ZoomLevel="{Binding MapZoom, Mode=TwoWay}"
+                         Center="{Binding MapGeopoint, Mode=TwoWay}"
+                         Layers="{x:Bind vm.Collection}">
+            <Maps:MapItemsControl>
+                <Image Source="Assets/circle-blue-overlay50.png" Maps:MapControl.Location="{Binding PosGeopoint}" Width="35" Height="35" Margin="-25,-50,0,0"  Visibility="{Binding PosVisibility}"/>
+            </Maps:MapItemsControl>
+            <!--<Maps:MapItemsControl ItemsSource="{Binding Collection}">
+                <Maps:MapItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="map_mvvm:PushPin">-->
+                        <!--<Grid HorizontalAlignment="Left"  Maps:MapControl.Location="{Binding Location}" Maps:MapControl.NormalizedAnchorPoint="0,1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Border Background="{ThemeResource SystemControlBackgroundAccentBrush}" Grid.Row="0">
+                                <TextBlock Text="{Binding Title}" HorizontalAlignment="Left" />
+                            </Border>
+                            <Polygon Points="0,0 12.5,0 0,20" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" StrokeThickness="0" Grid.Row="1" />
+                        </Grid>-->
+                        <!--<Maps:MapIcon Maps:MapControl.Location="{Binding Location}" Title="{Binding Title}"/>
+                        <StackPanel>
+                            
+                            <TextBlock Maps:MapControl.Location="{Binding Location}" Text="{Binding Title}"
+                                       Maps:MapControl.NormalizedAnchorPoint="0.5,0.5" FontSize="20" Margin="5"/>
+                        </StackPanel>
+                        <Maps:MapIcon Maps:MapControl.Location="{x:Bind Location}"/>
+                        <Image Source="Assets/region.png" Maps:MapControl.Location="{x:Bind Location}" Width="25" Height="25" Margin="-25,-50,0,0" />-->
+                    <!--</DataTemplate>
+                </Maps:MapItemsControl.ItemTemplate>
+            </Maps:MapItemsControl>-->
         </Maps:MapControl>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Grid x:Name="GridInfoOnePoint" Grid.Column="0" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Button  Content="&#xE8BB;" Click="Button_Click" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Right" Style="{StaticResource MyButtonStyleSmall}"/>
-                <TextBlock Name="InfoOnePoint" FontFamily="Verdana" Grid.Row="1" Margin="3,3,3,3"/>
+            <Grid x:Name="GridInfoOnePoint" Grid.Column="0" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5,5,5,5" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button  Content="&#xE8BB;" Click="Button_Click" Grid.Column="1"  FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Right" Style="{StaticResource MyButtonStyleSmall}"/>
+                <TextBlock Name="InfoOnePoint" FontFamily="Verdana" Margin="3,3,3,3" FontSize="10" TextWrapping="Wrap" IsTextSelectionEnabled="True"/>
             </Grid>
-            <Grid Grid.Column="2" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Button ToolTipService.ToolTip="Фильтр"  Content="&#xE71C;" Style="{StaticResource MyButtonStyleInPages}">
+            <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,10,10,10" Height="Auto" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}">
+                <Button ToolTipService.ToolTip="Фильтр"  Content="&#xE71C;" Style="{StaticResource MyButtonStyleInMap}">
                     <Button.Flyout>
                         <Flyout Placement="Left">
                             <Flyout.FlyoutPresenterStyle>
@@ -68,8 +95,11 @@
                         </Flyout>
                     </Button.Flyout>
                 </Button>
-                <Button x:Name="ScanOnce" Click="ScanOnce_Click" Grid.Row="1" ToolTipService.ToolTip="Обновить данные" Content="&#xE72C;" Style="{StaticResource MyButtonStyleInPages}"/>
-                <TextBlock x:Name="TextBlockPosition" 
+                <Button x:Name="ScanOnce" Click="ScanOnce_Click" ToolTipService.ToolTip="Обновить данные" Content="&#xE72C;" Style="{StaticResource MyButtonStyleInMap}"/>
+                <Button Content="&#xE81D;" Click="Position_Click" Foreground="DodgerBlue" ToolTipService.ToolTip="Переместиться на текущее местоположение" Style="{StaticResource MyButtonStyleInMap}"/>
+                <Button Content="&#xE109;" Click="More_Click" ToolTipService.ToolTip="Приблизить"  Style="{StaticResource MyButtonStyleInMap}"/>
+                <Button Content="&#xE108;" Click="Less_Click" ToolTipService.ToolTip="Отдалить"  Style="{StaticResource MyButtonStyleInMap}"/>
+                <!--<TextBlock x:Name="TextBlockPosition" 
                                Grid.Row="2"
                                Text="&#xE81D;" 
                                Tapped="TextBlockPosition_Tapped" 
@@ -77,9 +107,9 @@
                                Style="{StaticResource MyListTextBoxStyle1}"
                                HorizontalAlignment="Right" 
                                VerticalAlignment="Bottom"
-                               Margin="18"
-                               ToolTipService.ToolTip="Переместиться на текущее местоположение"  ToolTipService.Placement="Mouse"/>
-            </Grid>
+                               Margin="0"
+                               ToolTipService.ToolTip="Переместиться на текущее местоположение"  ToolTipService.Placement="Mouse"/>-->
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

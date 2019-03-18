@@ -8,7 +8,7 @@ namespace Wi_Fi_Map
         Brush ValueForeground { get; set; }
         Brush PositionForeground { get; set; }
         Brush ValuePositionForeground { get; set; }
-        Brush GridColor { get; set; }
+        //Brush GridColor { get; set; }
         Brush GridColorForRowDelimiter { get; set; }
     }
 }

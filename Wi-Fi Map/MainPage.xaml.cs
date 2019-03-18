@@ -8,6 +8,7 @@ using Windows.Services.Maps;
 using Windows.UI.ViewManagement;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
+using Wi_Fi_Map.Map_MVVM;
 
 namespace Wi_Fi_Map
 { 
@@ -16,6 +17,8 @@ namespace Wi_Fi_Map
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        MapViewModel vm = MapViewModel.GetInstance();
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -50,18 +53,21 @@ namespace Wi_Fi_Map
             var applicationView = ApplicationView.GetForCurrentView();
             var titleBar = applicationView.TitleBar;
             MapData mapData = MapData.GetInstance();
+            MapViewModel vm = MapViewModel.GetInstance();
             CurrentColorSchemeWifiInfo currentColorSchemeWifi = CurrentColorSchemeWifiInfo.GetInstance();
             if (doDarkTheme)
             {
                 RequestedTheme = ElementTheme.Dark;
-                mapData.Scheme = MapColorScheme.Dark;
+                //mapData.Scheme = MapColorScheme.Dark;
+                vm.SetColorScheme = MapColorScheme.Dark;
                 titleBar.ButtonForegroundColor = Colors.DeepPink;
                 currentColorSchemeWifi.ChangeValues(new NightSchemeForWifiInfo());
             }
             else
             {
                 RequestedTheme = ElementTheme.Light;
-                mapData.Scheme = MapColorScheme.Light;
+                //mapData.Scheme = MapColorScheme.Light;
+                vm.SetColorScheme = MapColorScheme.Light;
                 titleBar.ButtonForegroundColor = Colors.Black;
                 currentColorSchemeWifi.ChangeValues(new WhiteSchemeForWifiInfo());
             }
@@ -181,15 +187,19 @@ namespace Wi_Fi_Map
                     {
                         try
                         {
-                            mapData.Latitude = result.Locations[0].Point.Position.Latitude;
-                            mapData.Longitude = result.Locations[0].Point.Position.Longitude;
+
+                            vm.PosGeopoint = vm.CreateBasicGeopoint(result.Locations[0].Point.Position.Latitude,
+                                result.Locations[0].Point.Position.Longitude);
+                            vm.MapGeopoint = vm.PosGeopoint;
+                            vm.MapZoom = 20;
+                            vm.PosVisibility = Visibility.Visible;
                         }
                         catch (ArgumentOutOfRangeException)
                         {
                             MessageDialog md = new MessageDialog("По вашему запросу ничего не найдено!");
                             await md.ShowAsync();
                         }
-                        MyFrame.Navigate(typeof(Map), mapData);
+                        //MyFrame.Navigate(typeof(Map));
                     }
                 }
                 else if (result.Status == MapLocationFinderStatus.NetworkFailure)
