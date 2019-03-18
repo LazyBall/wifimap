@@ -1,5 +1,7 @@
-﻿using Windows.UI.Xaml;
+﻿using Wi_Fi_Map.Map_MVVM;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Maps;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -33,6 +35,11 @@ namespace Wi_Fi_Map
             ThemeSetting.Instance.ThemeIsDark = ToogleSwitchDarkTheme.IsOn;
             Toggled?.Invoke(ToogleSwitchDarkTheme.IsOn);                    
             ToogleSwitchDarkTheme.IsEnabled = true;
+
+            //Раньше нужно было перейти на страницу с картой, чтобы обновить тему карты. Теперь при изменении 
+            //во ViewModel цветовая схема карты пробиндится и сразу изменится
+            //MapViewModel vm=MapViewModel.GetInstance();
+            //vm.ColorScheme=(vm.ColorScheme == MapColorScheme.Light) ? MapColorScheme.Dark : MapColorScheme.Light;
         }
     }
 }

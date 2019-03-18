@@ -5,17 +5,49 @@
     xmlns:local="using:Wi_Fi_Map"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:wi_fi_info_mvvm="using:Wi_Fi_Map.Wi_Fi_Info_MVVM"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid x:Name="mainGrid">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    NavigationCacheMode="Required">
 
+    <Grid x:Name="mainGrid" Background="{ThemeResource SystemControlChromeLowAcrylicWindowBrush}">
+        
+        <!--SystemControlBaseHighAcrylicWindowBrush-->
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="stackPanelInfo"/>
+                <ItemsControl ItemsSource="{Binding Signals, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="wi_fi_info_mvvm:WifiSignalModel">
+                            <StackPanel>
+                            <controls:WrapPanel x:Name="stackPanelInfo" Orientation="Horizontal">
+                                <TextBlock Text="SSID: " 
+                                           Style="{StaticResource MyTextBlockStyleWifiInfo}"/>
+                                <TextBlock Text="{Binding SSID}" 
+                                           Style="{StaticResource MyTextBlockStyleWifiInfo}"/>
+                                <TextBlock Text="{Binding StrengthSymbol}" Foreground="{Binding StrengthBrush}" 
+                                           Style="{StaticResource MyListTextBoxStyle1}"/>
+                                <TextBlock Text="{Binding SignalStrength}" 
+                                           Style="{StaticResource MyTextBlockStyleWifiInfo}"/>
+                                <TextBlock Text="{Binding EncryptionSymbol}" Foreground="{Binding EncryptionBrush}" 
+                                           Style="{StaticResource MyListTextBoxStyle1}"/>
+                                <TextBlock Text="{Binding Encryption}" 
+                                           Style="{StaticResource MyTextBlockStyleWifiInfo}"/>
+                                <TextBlock Text="BSSID: " 
+                                           Style="{StaticResource MyTextBlockStyleWifiInfo}"/>
+                                    <TextBlock Text="{Binding BSSID}" 
+                                           IsTextSelectionEnabled="True" Style="{StaticResource MyTextBlockStyleWifiInfo}"/>
+                                </controls:WrapPanel>
+                                <Grid Height="1" Opacity="0.3" Background="LightBlue"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
             </ScrollViewer>
             <Grid Grid.Column="1" >
                 <Grid.RowDefinitions>
@@ -24,7 +56,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Button ToolTipService.ToolTip="Отсортировать" Content="&#xE8CB;" Style="{StaticResource MyButtonStyleInPages}">
+                <Button ToolTipService.ToolTip="Отсортировать" Content="&#xE8CB;" Style="{StaticResource MyButtonStyleInWifi}">
                     <Button.Flyout>
                         <Flyout Placement="Left">
                             <Flyout.FlyoutPresenterStyle>
@@ -48,13 +80,13 @@
                                     <TextBlock Text="Силе сигнала"/>
                                     <TextBlock Text="Не выбрано" x:Name="defaultTextBlock"/>
                                 </ComboBox>
-                                <Button Content="Ок" Click="RefreshWifiListButton_Click" Grid.Row="1" FontFamily="Verdana" Style="{StaticResource MyButtonStyleSmall}"/>
+                                <Button Content="Ок" Click="OkButton_Click" Grid.Row="1" FontFamily="Verdana" Style="{StaticResource MyButtonStyleSmall}"/>
                             </Grid>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
-                <Button x:Name="RefreshWifiListButton" Click="RefreshWifiListButton_Click" Grid.Row="1" ToolTipService.ToolTip="Обновить список" Content="&#xE72C;" Style="{StaticResource MyButtonStyleInPages}"/>
-                <Button x:Name="WifiInformationButton" Grid.Row="2" ToolTipService.ToolTip="Информация" Content="&#xE946;" VerticalAlignment="Bottom" Style="{StaticResource MyButtonStyleInPages}">
+                <Button x:Name="RefreshWifiListButton" Click="RefreshWifiListButton_Click" Grid.Row="1" ToolTipService.ToolTip="Обновить список" Content="{Binding StartStopSymbol}" Style="{StaticResource MyButtonStyleInWifi}"/>
+                <Button x:Name="WifiInformationButton" Grid.Row="2" ToolTipService.ToolTip="Информация" Content="&#xE946;" VerticalAlignment="Bottom" Style="{StaticResource MyButtonStyleInWifi}">
                     <Button.Flyout>
                         <Flyout Placement="Left">
                             <Flyout.FlyoutPresenterStyle>

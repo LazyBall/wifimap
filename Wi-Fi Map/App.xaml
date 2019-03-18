@@ -15,19 +15,31 @@
         <Style TargetType="Button" x:Key="MyButtonStyle">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
             <Setter Property="FontSize" Value="36"/>
-            <Setter Property="Background" Value="{ThemeResource SystemControlChromeLowAcrylicWindowBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}"/>
         </Style>
-        <Style TargetType="Button" x:Key="MyButtonStyleInPages">
-            <Setter Property="FontSize" Value="38"/>
+        <Style TargetType="Button" x:Key="MyButtonStyleInWifi">
+            <Setter Property="FontSize" Value="36"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0,0,0,0"/>
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-            <Setter Property="ToolTipService.Placement" Value="Mouse"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Button" x:Key="MyButtonStyleInMap">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,0"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="Height" Value="43"/>
         </Style>
         <Style TargetType="Button" x:Key="MyButtonStyleSmall">
             <Setter Property="BorderThickness" Value="0,0,0,0"/>
             <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="MyTextBlockStyleWifiInfo">
+            <Setter Property="Margin" Value="5,5,5,5"/>
+            <Setter Property="LineHeight" Value="21"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="TextWrapping" Value="NoWrap"/>
         </Style>
     </Application.Resources>
 

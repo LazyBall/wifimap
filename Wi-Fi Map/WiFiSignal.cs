@@ -1,17 +1,20 @@
 ﻿
 
+using System.ComponentModel;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
+
 namespace Wi_Fi_Map
 {
     public abstract class WiFi
     {
-        public string BSSID { get; set; }
+        public virtual string BSSID { get; set; }
 
-        public string SSID { get; set; }
+        public virtual string SSID { get; set; }
 
-        public string Encryption { get; set; }
+        public virtual string Encryption { get; set; }
 
-        public short SignalStrength { get; set; }
-
+        public virtual short SignalStrength { get; set; }
     }
 
     public class WiFiSignal : WiFi
