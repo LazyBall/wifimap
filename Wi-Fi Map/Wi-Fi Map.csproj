@@ -102,29 +102,22 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CurrentColorSchemeWifiInfo.cs" />
     <Compile Include="EncryptionFilter.cs" />
-    <Compile Include="IColorSchemeForWifiInfo.cs" />
     <Compile Include="Database.cs" />
-    <Compile Include="GPScoords.cs" />
     <Compile Include="IFilter.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Map MVVM\MapViewModel.cs" />
-    <Compile Include="Map MVVM\PushPin.cs" />
     <Compile Include="Map.xaml.cs">
       <DependentUpon>Map.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MapData.cs" />
-    <Compile Include="NightSchemeForWifiInfo.cs" />
     <Compile Include="ParametersPage.xaml.cs">
       <DependentUpon>ParametersPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings Classes\SendingDataSetting.cs" />
     <Compile Include="Settings Classes\ThemeSetting.cs" />
-    <Compile Include="WhiteSchemeForWifiInfo.cs" />
     <Compile Include="Wi-Fi Info MVVM\WifiInfoViewModel.cs" />
     <Compile Include="Wi-Fi Info MVVM\WifiSignalModel.cs" />
     <Compile Include="WiFiInfo.xaml.cs">
@@ -199,10 +192,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="DictionaryRes.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
