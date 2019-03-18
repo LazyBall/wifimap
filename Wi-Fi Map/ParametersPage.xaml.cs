@@ -35,11 +35,6 @@ namespace Wi_Fi_Map
             ThemeSetting.Instance.ThemeIsDark = ToogleSwitchDarkTheme.IsOn;
             Toggled?.Invoke(ToogleSwitchDarkTheme.IsOn);                    
             ToogleSwitchDarkTheme.IsEnabled = true;
-
-            //Раньше нужно было перейти на страницу с картой, чтобы обновить тему карты. Теперь при изменении 
-            //во ViewModel цветовая схема карты пробиндится и сразу изменится
-            //MapViewModel vm=MapViewModel.GetInstance();
-            //vm.ColorScheme=(vm.ColorScheme == MapColorScheme.Light) ? MapColorScheme.Dark : MapColorScheme.Light;
         }
     }
 }
