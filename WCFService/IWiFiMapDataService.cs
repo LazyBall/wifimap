@@ -1,28 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 
+/* Статья по WCF http://www.devowl.net/2017/07/WCF-service-csharp-client-server.html */
 namespace WCFService
 {
-    // ПРИМЕЧАНИЕ. Команду "Переименовать" в меню "Рефакторинг" можно использовать для одновременного изменения имени интерфейса "IService1" в коде и файле конфигурации.
+   
     [ServiceContract]
     public interface IWiFiMapDataService
     {
 
-        // TODO: Добавьте здесь операции служб
-
         [OperationContract]
-        IEnumerable<WiFiSignalWithGeoposition> GetData();
+        WiFiNetwork[] GetNewData(DateTime lastUpdatedDate);
 
-        [OperationContract (IsOneWay = true)]
-        void SendData(IEnumerable<WiFiSignalWithGeoposition> signals);
+        [OperationContract(IsOneWay = true)]
+        void SendData(IEnumerable<WiFiNetwork> networks);
+
     }
 
-
-    // Используйте контракт данных, как показано в примере ниже, чтобы добавить составные типы к операциям служб.
-    
-    [DataContract]
-    public class WiFiSignalWithGeoposition
+    // Контракт данных 
+    [DataContract(IsReference = true)] //IsReference - https://docs.microsoft.com/ru-ru/dotnet/framework/wcf/feature-details/interoperable-object-references
+    public class WiFiNetwork
     {
         [DataMember]
         public string BSSID { get; set; }
@@ -31,10 +30,13 @@ namespace WCFService
         public string SSID { get; set; }
 
         [DataMember]
-        public short SignalStrength { get; set; }
+        public string Encryption { get; set; }
 
         [DataMember]
-        public string Encryption { get; set; }
+        public int Frequency { get; set; }  //ChannelCenterFrequencyInKilohertz
+
+        [DataMember]
+        public double RSSI { get; set; } //NetworkRssiInDecibelMilliwatts
 
         [DataMember]
         public double Latitude { get; set; }
@@ -42,9 +44,9 @@ namespace WCFService
         [DataMember]
         public double Longitude { get; set; }
 
-        public WiFiSignalWithGeoposition()
-        {
+        [DataMember]
+        public DateTime LastDetection { get; set; }
 
-        }
     }
+
 }

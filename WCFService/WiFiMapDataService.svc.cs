@@ -1,83 +1,80 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.Data.SqlClient;
-using System.Globalization;
+using System.Linq;
+using System.ServiceModel;
+using System.Text.RegularExpressions;
 
-//Если не будет запускаться, то в свойствах Wi-Fi AzureCloudService "Интернет" ->
-//"Эмулятор" -> "Использовать полный эмулятор"
 namespace WCFService
 {
-    // ПРИМЕЧАНИЕ. Команду "Переименовать" в меню "Рефакторинг" можно использовать для одновременного изменения имени класса "Service1" в коде, SVC-файле и файле конфигурации.
-    // ПРИМЕЧАНИЕ. Чтобы запустить клиент проверки WCF для тестирования службы, выберите элементы Service1.svc или Service1.svc.cs в обозревателе решений и начните отладку.
+    //Если не будет запускаться, то в свойствах Wi-Fi AzureCloudService "Интернет" ->
+    //"Эмулятор" -> "Использовать полный эмулятор"
+
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class WiFiMapDataService : IWiFiMapDataService
     {
-        private static readonly string _dataTable = "WiFi";
-        private static readonly string _connectionString =
-            ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        //С помощью опции задаём, к какой бд подключаемся (модели данных при смене бд должны быть одинаковы)
+        readonly DbContextOptions<WiFiNetworkContext> options = (new DbContextOptionsBuilder<WiFiNetworkContext>())
+            .UseSqlServer(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString)
+            .Options;
 
-        public IEnumerable<WiFiSignalWithGeoposition> GetData()
+        public WiFiNetwork[] GetNewData(DateTime lastUpdatedDate)
         {
-            string sqlExpression = $@"SELECT * FROM {_dataTable}";
-            using (var connection = new SqlConnection(_connectionString))
+            using (var db = new WiFiNetworkContext(options))
             {
-                connection.Open();
-                var command = new SqlCommand(sqlExpression, connection);
-                using (var reader = command.ExecuteReader())
+                var periodUpdate = lastUpdatedDate.ToUniversalTime() - new TimeSpan(0, 0, 30);
+                return db.WiFiNetworks.
+                    Where(t => t.LastDetection > periodUpdate).ToArray();
+            }
+        }
+
+        public void SendData(IEnumerable<WiFiNetwork> networks)
+        {
+            using (var db = new WiFiNetworkContext(options))
+            {
+
+                foreach (var network in networks)
                 {
-                    if (reader.HasRows) // если есть данные
+                    if (CheckData(network))
                     {
-                        while (reader.Read()) // построчно считываем данные
+                        network.BSSID = network.BSSID.ToUpper();
+                        network.LastDetection = network.LastDetection.ToUniversalTime();
+                        var stored = db.WiFiNetworks.Find(network.BSSID);
+                        if (stored != null &&
+                            stored.LastDetection < network.LastDetection)
                         {
-                            var wifiSignal = new WiFiSignalWithGeoposition
+                            stored.SSID = network.SSID;
+                            stored.Encryption = network.Encryption;
+                            stored.Frequency = network.Frequency;
+                            stored.LastDetection = network.LastDetection;
+                            if (Math.Abs(stored.RSSI - network.RSSI) < 5)
                             {
-                                BSSID = reader.GetString(0),
-                                SSID = reader.GetString(1),
-                                Latitude = reader.GetDouble(2),
-                                Longitude = reader.GetDouble(3),
-                                SignalStrength = reader.GetInt16(4),
-                                Encryption = reader.GetString(5),
-                            };
-                            yield return wifiSignal;
+                                stored.RSSI = network.RSSI;
+                                stored.Latitude = network.Latitude;
+                                stored.Longitude = network.Longitude;
+                            }
+                        }
+                        else
+                        {
+                            db.WiFiNetworks.Add(network);
                         }
                     }
                 }
+
+                db.SaveChanges();
             }
         }
 
-        public void SendData(IEnumerable<WiFiSignalWithGeoposition> signals)
+        private bool CheckData(WiFiNetwork network)
         {
-            // название хранимой процедуры
-            string sqlExpression = "InsertWiFi";
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                var command = new SqlCommand
-                {
-                    CommandText = sqlExpression,
-                    Connection = connection,
-                    CommandType = System.Data.CommandType.StoredProcedure
-                };
-                foreach (var signal in signals)
-                {
-                    command.Parameters.Clear();
-                    command = AddParameters(command, signal);
-                    command.ExecuteNonQuery();
-                }
-            }
+            if (network.BSSID == null || network.SSID == null || network.Encryption == null) return false;
+            if (network.Latitude < (-90) && network.Latitude > (90)) return false;
+            if (network.Longitude < (-180) && network.Longitude > (180)) return false;
+            if (network.Frequency < 0) return false;
+            string pattern = @"[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}:[0-9a-f]{2}";
+            if (!Regex.IsMatch(network.BSSID, pattern, RegexOptions.IgnoreCase)) return false;
+            return true;
         }
-
-        private SqlCommand AddParameters(SqlCommand command, WiFiSignalWithGeoposition signal)
-        {
-            command.Parameters.AddWithValue("@bssid", signal.BSSID);
-            command.Parameters.AddWithValue("@ssid", signal.SSID);
-            command.Parameters.AddWithValue("@latitude",
-                signal.Latitude.ToString(new CultureInfo("en-US")));
-            command.Parameters.AddWithValue("@longitude",
-                signal.Longitude.ToString(new CultureInfo("en-US")));
-            command.Parameters.AddWithValue("@signalStrength",
-                signal.SignalStrength.ToString(new CultureInfo("en-US")));
-            command.Parameters.AddWithValue("@encryption", signal.Encryption);
-            return command;
-        }
-    }
+    }  
 }
