@@ -1,0 +1,17 @@
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:23] Emulator config file set to D:\Sanek\Wi-Fi Map\Service\Wi-Fi Map AzureCloudService\csx\Debug\roles\WCFService\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:23] DiagnosticsStoreRootPath set to: D:\Sanek\Wi-Fi Map\Service\Wi-Fi Map AzureCloudService\csx\Debug\roles\WCFService\approot
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:23] Loading config file: D:\Sanek\Wi-Fi Map\Service\Wi-Fi Map AzureCloudService\csx\Debug\roles\WCFService\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:23] Config file to read: D:\Sanek\Wi-Fi Map\Service\Wi-Fi Map AzureCloudService\csx\Debug\roles\WCFService\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:23] Checking VM Type
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:23] Emulator config file set to D:\Sanek\Wi-Fi Map\Service\Wi-Fi Map AzureCloudService\csx\Debug\roles\WCFService\approot\diagnostics.wadcfgx
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:23] Extension set to Emulator Mode
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:23] Reading XML configuration file
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:24] Bypassing private config decryption
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:24] Stopping the running plugin, if any
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:24] No DiagnosticsPlugin is running.
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:24] Killing any DiagnosticsPlugin that might remain.
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:24] Killing any MonAgentHost that might remain.
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:24] Diagnostics plugin stopped successfully
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:47:24] Resetting DiagnosticPlugin
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:48:36] DiagnosticsPlugin launched successfully with new configuration
+DiagnosticsPluginLauncher.exe Information: 0 : [20.03.2019 19:48:36] DiagnosticPlugin exited with code 0

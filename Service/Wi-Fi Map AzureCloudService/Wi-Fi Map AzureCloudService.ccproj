@@ -5,12 +5,12 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>2.9</ProductVersion>
-    <ProjectGuid>0217b68f-f154-4bb8-9c4b-99dbd97a364f</ProjectGuid>
+    <ProjectGuid>18ca26ae-f14d-4c5e-9a89-ffa1d3893f80</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Wi_Fi_Map_AzureCloudService</RootNamespace>
     <AssemblyName>Wi_Fi_Map_AzureCloudService</AssemblyName>
-    <StartDevelopmentStorage>True</StartDevelopmentStorage>
+    <StartDevelopmentStorage>False</StartDevelopmentStorage>
     <Name>Wi-Fi Map AzureCloudService</Name>
     <UseWebProjectPorts>False</UseWebProjectPorts>
   </PropertyGroup>
@@ -40,7 +40,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\WCFService\WCFService.csproj">
       <Name>WCFService</Name>
-      <Project>{d564bbcd-ec86-49e7-916f-99713f224d80}</Project>
+      <Project>{48333692-3d1e-4831-a585-3933972ca497}</Project>
       <Private>True</Private>
       <RoleType>Web</RoleType>
       <RoleName>WCFService</RoleName>
